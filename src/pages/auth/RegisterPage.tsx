@@ -1,21 +1,41 @@
-import { Button, Card, Checkbox, Divider, Form, Input, Typography } from "antd";
+import { Button, Card, Checkbox, Divider, Form, Input, message, notification, Typography } from "antd";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import handleAPI from "../../apis/handleAPI";
 
 interface valuesForm {
-    username: string
+    name: string
     email: string;
     password: string;
     confirmPassword: string;
+    phone: string;
 }
 
 const { Title, Paragraph } = Typography
 const RegisterPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm()
-
-    const handLogin = (values: valuesForm) => {
-        console.log(values);
+    const navigate = useNavigate();
+    const handRegister = async (values: valuesForm) => {
+        setIsLoading(true);
+        const api = "/auth/register"
+        try {
+            const res: any = await handleAPI(api, values, "post");
+            if (res.data) {
+                message.success("Đăng ký thành công");
+                navigate("/admin/login");
+            } else {
+                notification.error({
+                    message: "Có lỗi xảy ra",
+                    description: res.message,
+                    duration: 5
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -26,18 +46,18 @@ const RegisterPage = () => {
             <Form
                 layout="vertical"
                 form={form}
-                onFinish={handLogin}
+                onFinish={handRegister}
                 disabled={isLoading}
             >
                 <Form.Item
-                    label="Name"
+                    label="Tên Người dùng"
                     name="name"
                     rules={[{
                         required: true,
-                        message: 'Please input your name!'
+                        message: 'Không được để trống!'
                     },]}
                 >
-                    <Input placeholder="Name" maxLength={100} />
+                    <Input placeholder="Tên Người dùng" maxLength={100} />
                 </Form.Item>
 
                 <Form.Item
@@ -45,56 +65,56 @@ const RegisterPage = () => {
                     name="email"
                     rules={[{
                         required: true,
-                        message: 'Please input your email!'
+                        message: 'Không được để trống!'
                     },
                     {
                         type: "email",
-                        message: 'email is not in correct format!'
+                        message: 'Email không đúng định dạnh!'
                     }
                     ]}
                 >
                     <Input placeholder="Email" allowClear maxLength={100} type="email" />
                 </Form.Item>
                 <Form.Item
-                    label="Password"
+                    label="Mật khẩu"
                     name="password"
                     rules={[
                         {
                             required: true,
-                            message: "Please input your password!"
+                            message: "Không được để trống!"
                         }
                     ]}
                 >
 
-                    <Input.Password placeholder="Password" allowClear />
+                    <Input.Password placeholder="Mật khẩu" allowClear />
                 </Form.Item>
 
                 <Form.Item
-                    label="Confirm password"
+                    label="Xác nhận mật khẩu"
                     name="confirmPassword"
                     rules={[
                         {
                             required: true,
-                            message: "Please input your password!"
+                            message: "Không được để trống!"
                         }
                     ]}
                 >
 
-                    <Input.Password placeholder="Password" allowClear />
+                    <Input.Password placeholder="Xác nhận mật khẩu" allowClear />
                 </Form.Item>
 
                 <Form.Item
-                    label="Phone"
+                    label="Số điện thoại"
                     name="phone"
                     rules={[
                         {
                             required: true,
-                            message: "Please input your phone!"
+                            message: "Không được để trống!"
                         }
                     ]}
                 >
 
-                    <Input placeholder="phone" allowClear />
+                    <Input placeholder="Số điện thoại" allowClear />
                 </Form.Item>
                 <Button
                     onClick={() => form.submit()}
@@ -105,17 +125,17 @@ const RegisterPage = () => {
                     size="large"
                     loading={isLoading}
                 >
-                    Sign up
+                    Đặng ký
                 </Button>
 
                 <Divider>
                     <Paragraph type="secondary" style={{ margin: 0 }}>
-                        Or sign up with
+                        Or
                     </Paragraph>
                 </Divider>
                 <div className="text-center">
                     <Paragraph>
-                        Already have an account <Link to={"/admin/login"}>Login In</Link>
+                        Đã có tài khoản? <Link to={"/admin/login"}>Login In</Link>
                     </Paragraph>
                 </div>
             </Form>
