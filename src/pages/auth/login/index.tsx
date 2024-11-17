@@ -1,29 +1,33 @@
 import { Button, Card, Checkbox, Divider, Form, Input, message, notification, Typography } from "antd";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import handleAPI from "../../apis/handleAPI";
-
-interface valuesForm {
-    name: string
-    email: string;
-    password: string;
-    confirmPassword: string;
-    phone: string;
-}
+import { doLoginAction } from "@/redux/reducers/auth.reducer";
+import { useAppDispatch } from "@/redux/hook";
+import handleAPI from "@/apis/handleAPI";
 
 const { Title, Paragraph } = Typography
-const RegisterPage = () => {
+
+interface valuesForm {
+    email: string;
+    password: string;
+}
+
+const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm()
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const handRegister = async (values: valuesForm) => {
+
+    const handLogin = async (values: valuesForm) => {
         setIsLoading(true);
-        const api = "/auth/register"
+        const api = "/auth/login"
         try {
-            const res: any = await handleAPI(api, values, "post");
+            const res = await handleAPI(api, values, "post");
             if (res.data) {
-                message.success("Đăng ký thành công");
-                navigate("/admin/login");
+                localStorage.setItem("access_token", res.data.access_token);
+                dispatch(doLoginAction(res.data.user));// lưu vào redux
+                message.success("Đăng nhập thành công");
+                navigate("/");
             } else {
                 notification.error({
                     message: "Có lỗi xảy ra",
@@ -32,44 +36,34 @@ const RegisterPage = () => {
                 });
             }
         } catch (error) {
-            console.log(error);
+            console.log(error)
         } finally {
             setIsLoading(false)
         }
     }
 
     return (
-        <Card >
+        <Card>
             <div className="text-center">
-                <Title level={2}>Sign up</Title>
+                <Title level={2}>Đăng nhập</Title>
+                <Paragraph type={"secondary"}>Chào mứng trở lại! Vui lòng nhập thông tin chi tiết của bạn </Paragraph>
             </div>
             <Form
                 layout="vertical"
                 form={form}
-                onFinish={handRegister}
+                onFinish={handLogin}
                 disabled={isLoading}
             >
-                <Form.Item
-                    label="Tên Người dùng"
-                    name="name"
-                    rules={[{
-                        required: true,
-                        message: 'Không được để trống!'
-                    },]}
-                >
-                    <Input placeholder="Tên Người dùng" maxLength={100} />
-                </Form.Item>
-
                 <Form.Item
                     label="Email"
                     name="email"
                     rules={[{
                         required: true,
-                        message: 'Không được để trống!'
+                        message: 'Vui lòng không để trống!'
                     },
                     {
                         type: "email",
-                        message: 'Email không đúng định dạnh!'
+                        message: 'Email không đúng định dạng!'
                     }
                     ]}
                 >
@@ -81,41 +75,26 @@ const RegisterPage = () => {
                     rules={[
                         {
                             required: true,
-                            message: "Không được để trống!"
+                            message: "Vui lòng nhập mật khẩu!"
                         }
                     ]}
                 >
 
                     <Input.Password placeholder="Mật khẩu" allowClear />
                 </Form.Item>
+                <div className="row mb-3">
+                    <div className="col">
+                        <Checkbox>
+                            remember 30 days
+                        </Checkbox>
+                    </div>
+                    <div className="col text-end">
+                        <Link to={""}>
+                            Quên mật khẩu
+                        </Link>
+                    </div>
+                </div>
 
-                <Form.Item
-                    label="Xác nhận mật khẩu"
-                    name="confirmPassword"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Không được để trống!"
-                        }
-                    ]}
-                >
-
-                    <Input.Password placeholder="Xác nhận mật khẩu" allowClear />
-                </Form.Item>
-
-                <Form.Item
-                    label="Số điện thoại"
-                    name="phone"
-                    rules={[
-                        {
-                            required: true,
-                            message: "Không được để trống!"
-                        }
-                    ]}
-                >
-
-                    <Input placeholder="Số điện thoại" allowClear />
-                </Form.Item>
                 <Button
                     onClick={() => form.submit()}
                     style={{
@@ -123,9 +102,8 @@ const RegisterPage = () => {
                     }}
                     type="primary"
                     size="large"
-                    loading={isLoading}
                 >
-                    Đặng ký
+                    Đăng nhập
                 </Button>
 
                 <Divider>
@@ -135,12 +113,12 @@ const RegisterPage = () => {
                 </Divider>
                 <div className="text-center">
                     <Paragraph>
-                        Đã có tài khoản? <Link to={"/admin/login"}>Login In</Link>
+                        Chưa có tài khoản? <Link to={"/auth/register"}>Sign Up</Link>
                     </Paragraph>
                 </div>
             </Form>
-        </Card>
+        </Card >
     )
 }
 
-export default RegisterPage;
+export default LoginPage;
