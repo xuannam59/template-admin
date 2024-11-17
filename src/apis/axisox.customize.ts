@@ -45,6 +45,14 @@ instance.interceptors.response.use(function (response) {
             return instance.request(error.config);
         }
     }
+
+    if (
+        error.config && error.response
+        && +error.response.status === 400
+        && error.config.url === "/auth/refresh-token"
+    ) {
+        window.location.href = "/auth/login"
+    }
     return error?.response?.data ?? Promise.reject(error);
 });
 
