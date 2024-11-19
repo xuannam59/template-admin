@@ -20,12 +20,12 @@ const SiderComponent = (props: IProp) => {
         {
             key: 'users',
             icon: <UserOutlined />,
-            label: <Link to={'/users'}>Users</Link>,
+            label: <Link to={'/users'}>Manage Users</Link>,
         },
     ]
     return <>
         <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "white" }}>
-            <div style={{ height: 32, margin: 16, textAlign: 'center' }}>
+            <div style={{ height: 32, margin: 16, textAlign: 'center', lineHeight: "32px" }}>
                 Admin
             </div>
             <Menu
@@ -34,8 +34,9 @@ const SiderComponent = (props: IProp) => {
                 mode="inline"
                 items={items}
                 onClick={(e) => setActiveMenu(e.key)}
+                style={{ borderTop: "1px solid #f2f6fa" }}
             />
-        </Sider>
+        </Sider >
     </>
 }
 

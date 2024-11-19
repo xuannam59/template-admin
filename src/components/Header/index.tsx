@@ -1,8 +1,8 @@
 import handleAPI from "@/apis/handleAPI"
 import { useAppDispatch, useAppSelector } from "@/redux/hook"
 import { doLogOutAction } from "@/redux/reducers/auth.reducer"
-import { DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { Button, Dropdown, message, Space } from "antd"
+import { DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons"
+import { Avatar, Button, Dropdown, message, Space } from "antd"
 import { Header } from "antd/es/layout/layout"
 import { useNavigate } from "react-router-dom"
 
@@ -43,7 +43,7 @@ const HeaderComponent = (props: IProp) => {
     }
 
     return <>
-        <Header style={{ padding: 0, backgroundColor: "#f5f5f5", borderBottom: "1px solid #ebebeb" }} >
+        <Header style={{ backgroundColor: "white", borderBottom: "1px solid #f2f6fa", borderLeft: "1px solid #f2f6fa" }} >
             <div className="row">
                 <div className="col">
                     <Button
@@ -57,14 +57,14 @@ const HeaderComponent = (props: IProp) => {
                         }}
                     />
                 </div>
-                <div className="col text-end me-3">
+                <div className="col text-end">
                     <Dropdown menu={{ items: items }} trigger={['click']}>
-                        <a onClick={(e) => e.preventDefault()}>
+                        <span style={{ cursor: "pointer" }}>
                             <Space>
-                                Welcome {user?.name}
-                                <DownOutlined />
+                                <Avatar size={38} src={user.avatar} />
+                                {user?.name}
                             </Space>
-                        </a>
+                        </span>
                     </Dropdown>
                 </div>
             </div>

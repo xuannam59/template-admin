@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import handleAPI from './apis/handleAPI';
+import "@/styles/reset.css"
 import { useAppDispatch, useAppSelector } from './redux/hook';
 import { doGetAccountAction } from './redux/reducers/auth.reducer';
 import Loading from './components/Loading';

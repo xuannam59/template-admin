@@ -1,5 +1,5 @@
-import LayoutAdmin from "@/components/layouts/LayoutAdmin";
-import LayoutAuth from "@/components/layouts/LayoutAut";
+import LayoutAdmin from "@/components/Admin/LayoutAdmin";
+import LayoutAuth from "@/components/Auth/LayoutAuth";
 import NotFound from "@/components/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AdminPage from "@/pages/Dashboard";

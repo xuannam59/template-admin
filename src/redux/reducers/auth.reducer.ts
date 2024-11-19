@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../store";
 
 export interface authSate {
     isAuthenticated: boolean,
@@ -9,6 +8,7 @@ export interface authSate {
         email: string;
         name: string;
         role: string;
+        avatar: string
     }
 }
 
@@ -19,7 +19,8 @@ const initialState: authSate = {
         _id: "",
         email: "",
         name: "",
-        role: ""
+        role: "",
+        avatar: ""
     }
 }
 
@@ -45,7 +46,8 @@ const authSlide = createSlice({
                 _id: "",
                 email: "",
                 name: "",
-                role: ""
+                role: "",
+                avatar: ""
             };
         }
     }

@@ -1,9 +1,9 @@
+import UserTable from "@/components/User/UserTable";
+
 const UserPage = () => {
     return (
         <>
-            <div>
-                User Page
-            </div>
+            <UserTable />
         </>
     )
 }

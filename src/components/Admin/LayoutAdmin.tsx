@@ -30,7 +30,7 @@ const LayoutAdmin = () => {
                         collapsed={collapsed}
                         setCollapsed={setCollapsed}
                     />
-                    <Content>
+                    <Content style={{ padding: '15px' }}>
                         <Outlet />
                     </Content>
                 </Layout>
