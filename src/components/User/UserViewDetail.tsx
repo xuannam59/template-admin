@@ -3,20 +3,20 @@ import { DataType } from "./UserTable";
 import dayjs from "dayjs";
 
 interface IProps {
-    open: boolean,
+    isOpenDetail: boolean,
     dataViewDetail: DataType | undefined,
     onClose: any
 }
 
-const InFoUser = (props: IProps) => {
-    const { open, onClose, dataViewDetail } = props;
+const UserViewDetail = (props: IProps) => {
+    const { isOpenDetail, onClose, dataViewDetail } = props;
 
     return (
         <>
             <Drawer
                 title={`Chức năng xem chi tiết`}
                 onClose={onClose}
-                open={open}
+                open={isOpenDetail}
                 width={"50vw"}
             >
                 <Descriptions
@@ -29,7 +29,7 @@ const InFoUser = (props: IProps) => {
                     <Descriptions.Item label="Tên hiên thị">{dataViewDetail?.name}</Descriptions.Item>
                     <Descriptions.Item label="Email">{dataViewDetail?.email}</Descriptions.Item>
                     <Descriptions.Item label="Số điện thoại">
-                        {dataViewDetail?.email}
+                        {dataViewDetail?.phone}
                     </Descriptions.Item>
                     <Descriptions.Item label="Vai trò" span={2}>
                         <Badge status="processing" text={dataViewDetail?.role} />
@@ -46,4 +46,4 @@ const InFoUser = (props: IProps) => {
     )
 }
 
-export default InFoUser;
+export default UserViewDetail;

@@ -1,16 +1,15 @@
 import { CloudUploadOutlined, ExportOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { Button, Typography } from "antd";
 
-const { Title } = Typography
-
 
 interface IProps {
     setFilter: React.Dispatch<React.SetStateAction<string>>;
     setSortQuery: React.Dispatch<React.SetStateAction<string>>;
+    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 const HeaderTable = (props: IProps) => {
-
+    const { setIsModalOpen } = props
     return (
         <>
             <div className="d-flex justify-content-between">
@@ -29,6 +28,7 @@ const HeaderTable = (props: IProps) => {
                     <Button
                         icon={<PlusOutlined />}
                         type="primary"
+                        onClick={() => setIsModalOpen(true)}
                     >Thêm mới</Button>
                     <Button onClick={() => {
                         props.setFilter("")

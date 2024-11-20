@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import handleAPI from "@/apis/handleAPI";
 import HeaderTable from "./HeaderTable";
 import { Link } from "react-router-dom";
-import InFoUser from "./InfoUser";
+import UserViewDetail from "./UserViewDetail";
+import UserModalCreate from "./UserModalCreate";
+import dayjs from "dayjs";
 
 export interface DataType {
     _id: string;
@@ -26,7 +28,8 @@ const UserTable = () => {
     const [sortQuery, setSortQuery] = useState("");
     const [filter, setFilter] = useState("");
     const [listUser, setListUser] = useState([]);
-    const [open, setOpen] = useState(false);
+    const [isOpenDetail, setIsOpenDetail] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState<DataType | undefined>(undefined);
 
 
@@ -61,7 +64,7 @@ const UserTable = () => {
             render: (text, record) => {
                 return <Link to={''} onClick={() => {
                     setDataViewDetail(record);
-                    setOpen(true)
+                    setIsOpenDetail(true)
                 }}
                 >{text}</Link>
             }
@@ -84,6 +87,13 @@ const UserTable = () => {
         {
             title: 'Vai trò',
             dataIndex: 'role',
+        },
+        {
+            title: 'Ngày cập nhập',
+            dataIndex: 'updatedAt',
+            render: (text) => {
+                return dayjs(text).format("DD/MM/YYYY")
+            }
         },
         {
             title: 'Action',
@@ -109,7 +119,7 @@ const UserTable = () => {
     }
 
     return (<>
-        <div className="container p-5 rounded" style={{ backgroundColor: "white" }}>
+        <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
             <Title level={3}>Quản lý người dùng</Title>
             <div className="row">
                 <div className="col-12 mb-3">
@@ -122,6 +132,7 @@ const UserTable = () => {
                         title={() => <HeaderTable
                             setFilter={setFilter}
                             setSortQuery={setSortQuery}
+                            setIsModalOpen={setIsModalOpen}
                         />}
                         loading={isLoading}
                         columns={columns}
@@ -144,13 +155,18 @@ const UserTable = () => {
                 </div>
             </div>
         </div>
-        <InFoUser
-            open={open}
+        <UserViewDetail
+            isOpenDetail={isOpenDetail}
             onClose={() => {
                 setDataViewDetail(undefined);
-                setOpen(false)
+                setIsOpenDetail(false)
             }}
             dataViewDetail={dataViewDetail}
+        />
+        <UserModalCreate
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+            fetchUser={fetchUser}
         />
     </>)
 }
