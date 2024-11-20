@@ -5,11 +5,12 @@ import { Button, Typography } from "antd";
 interface IProps {
     setFilter: React.Dispatch<React.SetStateAction<string>>;
     setSortQuery: React.Dispatch<React.SetStateAction<string>>;
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setIsModalOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsModalOpenImport: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const HeaderTable = (props: IProps) => {
-    const { setIsModalOpen } = props
+    const { setIsModalOpenCreate, setIsModalOpenImport } = props
     return (
         <>
             <div className="d-flex justify-content-between">
@@ -23,12 +24,13 @@ const HeaderTable = (props: IProps) => {
                     <Button
                         icon={<CloudUploadOutlined />}
                         type="primary"
+                        onClick={() => setIsModalOpenImport(true)}
                     >Import</Button>
 
                     <Button
                         icon={<PlusOutlined />}
                         type="primary"
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => setIsModalOpenCreate(true)}
                     >Thêm mới</Button>
                     <Button onClick={() => {
                         props.setFilter("")

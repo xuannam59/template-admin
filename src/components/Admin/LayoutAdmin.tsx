@@ -12,8 +12,6 @@ const { Content } = Layout;
 
 const LayoutAdmin = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const [activeMenu, setActiveMenu] = useState('dashboard');
-
 
     return (
         <>
@@ -22,8 +20,6 @@ const LayoutAdmin = () => {
             >
                 <SiderComponent
                     collapsed={collapsed}
-                    activeMenu={activeMenu}
-                    setActiveMenu={setActiveMenu}
                 />
                 <Layout>
                     <HeaderComponent

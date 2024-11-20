@@ -1,16 +1,28 @@
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu } from "antd"
 import Sider from "antd/es/layout/Sider"
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 interface IProp {
     collapsed: boolean,
-    activeMenu: string,
-    setActiveMenu: React.Dispatch<React.SetStateAction<string>>,
 }
 
 const SiderComponent = (props: IProp) => {
-    const { collapsed, activeMenu, setActiveMenu } = props;
+    const [activeMenu, setActiveMenu] = useState('');
+    let location = useLocation();
+    useEffect(() => {
+        if (location && location.pathname) {
+            const allRoute = ["", "users"];
+            const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
+            if (currentRoute) {
+                setActiveMenu(currentRoute);
+            } else {
+                setActiveMenu("dashboard");
+            }
+        }
+    }, [location]);
+    const { collapsed } = props;
     const items = [
         {
             key: 'dashboard',
@@ -29,7 +41,8 @@ const SiderComponent = (props: IProp) => {
                 Admin
             </div>
             <Menu
-                defaultSelectedKeys={[activeMenu]}
+                defaultSelectedKeys={['dashboard']}
+                selectedKeys={[activeMenu]}
                 theme="light"
                 mode="inline"
                 items={items}

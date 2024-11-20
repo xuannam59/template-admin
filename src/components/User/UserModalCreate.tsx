@@ -3,13 +3,13 @@ import { Divider, Form, Input, message, Modal, notification, Select } from "antd
 import { useState } from "react"
 
 interface IProps {
-    isModalOpen: boolean
-    setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+    isModalOpenCreate: boolean
+    setIsModalOpenCreate: React.Dispatch<React.SetStateAction<boolean>>
     fetchUser: any
 }
 
 const UserModalCreate = (props: IProps) => {
-    const { isModalOpen, setIsModalOpen, fetchUser } = props
+    const { isModalOpenCreate, setIsModalOpenCreate, fetchUser } = props
     const [isLoading, setIsLoading] = useState(false);
     const [form] = Form.useForm()
 
@@ -31,12 +31,12 @@ const UserModalCreate = (props: IProps) => {
     }
     const onCancel = () => {
         form.resetFields();
-        setIsModalOpen(false);
+        setIsModalOpenCreate(false);
     }
     return (
         <Modal
             title="Tạo mới người dùng"
-            open={isModalOpen}
+            open={isModalOpenCreate}
             onOk={() => form.submit()}
             onCancel={onCancel}
             okText={"Tạo mới"}

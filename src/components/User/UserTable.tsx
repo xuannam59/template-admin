@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import UserViewDetail from "./UserViewDetail";
 import UserModalCreate from "./UserModalCreate";
 import dayjs from "dayjs";
+import UserImport from "./data/UserImport";
 
 export interface DataType {
     _id: string;
@@ -29,8 +30,9 @@ const UserTable = () => {
     const [filter, setFilter] = useState("");
     const [listUser, setListUser] = useState([]);
     const [isOpenDetail, setIsOpenDetail] = useState(false);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState<DataType | undefined>(undefined);
+    const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
+    const [isModalOpenImport, setIsModalOpenImport] = useState(false);
 
 
     useEffect(() => {
@@ -132,7 +134,8 @@ const UserTable = () => {
                         title={() => <HeaderTable
                             setFilter={setFilter}
                             setSortQuery={setSortQuery}
-                            setIsModalOpen={setIsModalOpen}
+                            setIsModalOpenCreate={setIsModalOpenCreate}
+                            setIsModalOpenImport={setIsModalOpenImport}
                         />}
                         loading={isLoading}
                         columns={columns}
@@ -164,8 +167,13 @@ const UserTable = () => {
             dataViewDetail={dataViewDetail}
         />
         <UserModalCreate
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
+            isModalOpenCreate={isModalOpenCreate}
+            setIsModalOpenCreate={setIsModalOpenCreate}
+            fetchUser={fetchUser}
+        />
+        <UserImport
+            setIsModalOpenImport={setIsModalOpenImport}
+            isModalOpenImport={isModalOpenImport}
             fetchUser={fetchUser}
         />
     </>)
