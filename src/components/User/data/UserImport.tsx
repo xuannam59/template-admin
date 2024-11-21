@@ -3,6 +3,7 @@ import { message, Modal, notification, Table, Upload, UploadProps } from "antd";
 import type { UploadRequestOption } from "rc-upload/lib/interface"; // Import đúng kiểu
 import { useState } from "react";
 import * as XLSX from 'xlsx';
+import template from "./template.xlsx?url"
 
 const { Dragger } = Upload;
 
@@ -118,6 +119,7 @@ const UserImport = (props: IProps) => {
                         Support for a single or bulk upload. Strictly prohibited from uploading company data or other
                         banned files.
                     </p>
+                    <a onClick={(e) => e.stopPropagation()} download href={template} >Download Template</a>
                 </Dragger>
 
                 <div className="p-3">

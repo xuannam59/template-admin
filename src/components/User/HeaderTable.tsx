@@ -1,5 +1,7 @@
+import { downloadExcel } from "@/helpers/exportExcel";
 import { CloudUploadOutlined, ExportOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Button, Typography } from "antd";
+import { Button, notification, Typography } from "antd";
+import dayjs from "dayjs";
 
 
 interface IProps {
@@ -7,10 +9,34 @@ interface IProps {
     setSortQuery: React.Dispatch<React.SetStateAction<string>>;
     setIsModalOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModalOpenImport: React.Dispatch<React.SetStateAction<boolean>>;
+    listUser: any[]
 }
 
 const HeaderTable = (props: IProps) => {
-    const { setIsModalOpenCreate, setIsModalOpenImport } = props
+    const { setIsModalOpenCreate, setIsModalOpenImport, listUser } = props
+    const exportData = () => {
+        const data = listUser.map((item) => {
+            return {
+                "ID": item._id,
+                "Tên Hiên thị": item.name,
+                "Email": item.email,
+                "Số điện thoại": item.phone,
+                "Vai trò": item.role,
+                "Ngày tạo": dayjs(item.createdAt).format("DD/MM/YYYY"),
+                "Ngày cập nhập": dayjs(item.updatedAt).format("DD/MM/YYYY"),
+            }
+        })
+        if (data.length > 0) {
+            downloadExcel(data);
+        } else {
+            notification.error({
+                message: "Export error",
+                description: "Không lấy được dữ liệu để xuất"
+            })
+        }
+
+
+    }
     return (
         <>
             <div className="d-flex justify-content-between">
@@ -19,6 +45,7 @@ const HeaderTable = (props: IProps) => {
                     <Button
                         icon={<ExportOutlined />}
                         type="primary"
+                        onClick={() => exportData()}
                     >Export</Button>
 
                     <Button

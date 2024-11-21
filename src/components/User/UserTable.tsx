@@ -136,6 +136,7 @@ const UserTable = () => {
                             setSortQuery={setSortQuery}
                             setIsModalOpenCreate={setIsModalOpenCreate}
                             setIsModalOpenImport={setIsModalOpenImport}
+                            listUser={listUser}
                         />}
                         loading={isLoading}
                         columns={columns}
