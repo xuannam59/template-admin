@@ -1,4 +1,4 @@
-import { Table, TableColumnsType, TableProps, Typography } from "antd";
+import { message, notification, Popconfirm, Table, TableColumnsType, TableProps, Typography } from "antd";
 import InputSearch from "./InputSearch";
 import { useEffect, useState } from "react";
 import handleAPI from "@/apis/handleAPI";
@@ -8,6 +8,8 @@ import UserViewDetail from "./UserViewDetail";
 import UserModalCreate from "./UserModalCreate";
 import dayjs from "dayjs";
 import UserImport from "./data/UserImport";
+import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
+import UserModalUpdate from "./UserModalUpdate";
 
 export interface DataType {
     _id: string;
@@ -32,6 +34,8 @@ const UserTable = () => {
     const [isOpenDetail, setIsOpenDetail] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState<DataType | undefined>(undefined);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
+    const [isModalOpenUpdate, setIsModalOpenUpdate] = useState(false);
+    const [dataSelect, setDataSelect] = useState<any>(undefined);
     const [isModalOpenImport, setIsModalOpenImport] = useState(false);
 
 
@@ -41,7 +45,7 @@ const UserTable = () => {
 
     const fetchUser = async () => {
         setIsLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}${filter ? filter : ""}${sortQuery ? `&sort=${sortQuery}` : ""}`;
+        let query = `current=${current}&pageSize=${pageSize}${filter ? filter : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
         const res = await handleAPI(`/users?${query}`);
         if (res.data && res) {
             setListUser(res.data.result);
@@ -49,6 +53,22 @@ const UserTable = () => {
         }
         setIsLoading(false);
     }
+
+    const handelDelete = async (id: string) => {
+        setIsLoading(true)
+        const res = await handleAPI(`/users/${id}`, "", "delete");
+        if (res && res.data) {
+            fetchUser();
+            message.success("Xoá user thành công");
+        } else {
+            notification.error({
+                message: "Có lỗi xảy ra",
+                description: res.message
+            })
+        }
+        setIsLoading(false)
+    }
+
     const columns: TableColumnsType<DataType> = [
         {
             title: 'STT',
@@ -100,7 +120,38 @@ const UserTable = () => {
         {
             title: 'Action',
             fixed: "right",
-            width: 100
+            render: (text, record) => {
+                return (
+                    <>
+                        <div className="d-flex gap-3">
+                            <EditTwoTone
+                                style={{ fontSize: '18px', cursor: "pointer" }}
+                                twoToneColor="#f57800"
+                                onClick={() => {
+                                    setIsModalOpenUpdate(true)
+                                    setDataSelect(record)
+                                }}
+                            />
+
+                            <Popconfirm
+                                placement="bottomRight"
+                                title={"Xoá người dùng"}
+                                description={"Bạn chắc chắn muốn xoá người dùng này"}
+                                okText="Yes"
+                                cancelText="No"
+                                onConfirm={() => {
+                                    handelDelete(record._id);
+                                }}
+                            >
+                                <DeleteTwoTone
+                                    style={{ fontSize: '18px', cursor: "pointer" }}
+                                    twoToneColor="#ff4d4f"
+                                />
+                            </Popconfirm>
+                        </div>
+                    </>
+                )
+            }
         },
     ];
 
@@ -171,6 +222,15 @@ const UserTable = () => {
             isModalOpenCreate={isModalOpenCreate}
             setIsModalOpenCreate={setIsModalOpenCreate}
             fetchUser={fetchUser}
+        />
+        <UserModalUpdate
+            isModalOpenUpdate={isModalOpenUpdate}
+            onclose={() => {
+                setDataSelect(undefined)
+                setIsModalOpenUpdate(false)
+            }}
+            fetchUser={fetchUser}
+            dataSelect={dataSelect}
         />
         <UserImport
             setIsModalOpenImport={setIsModalOpenImport}

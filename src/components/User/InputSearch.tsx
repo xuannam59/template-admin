@@ -1,3 +1,4 @@
+import { replaceName } from "@/helpers/replaceName";
 import { Button, Form, Input, notification } from "antd"
 
 interface IProps {
@@ -17,7 +18,8 @@ const InputSearch = (props: IProps) => {
     const onFinish = (values: valuesForm) => {
         let query = "";
         if (values.name) {
-            query += `&name=/${values.name}/i`;
+            const name = replaceName(values.name);
+            query += `&slug=/${name}/i`;
         }
         if (values.email) {
             query += `&email=/${values.email}/i`;
