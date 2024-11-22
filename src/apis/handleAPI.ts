@@ -18,4 +18,17 @@ const handleAPI = async (
     });
 }
 
+export const handleUploadFileAPI = (file: any) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append("file", file);
+    return axios({
+        method: 'post',
+        url: '/file/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+}
+
 export default handleAPI;

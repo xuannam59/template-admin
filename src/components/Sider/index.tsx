@@ -2,6 +2,9 @@ import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 import { Menu } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { useEffect, useState } from "react";
+import { BsBox2 } from "react-icons/bs";
+import { CiBoxList } from "react-icons/ci";
+import { MdOutlineDashboard, MdOutlinePlaylistAdd } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 
 interface IProp {
@@ -13,7 +16,7 @@ const SiderComponent = (props: IProp) => {
     let location = useLocation();
     useEffect(() => {
         if (location && location.pathname) {
-            const allRoute = ["", "users"];
+            const allRoute = ["", "users", "products", "addProduct", "add-product"];
             const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
             if (currentRoute) {
                 setActiveMenu(currentRoute);
@@ -26,7 +29,7 @@ const SiderComponent = (props: IProp) => {
     const items = [
         {
             key: 'dashboard',
-            icon: <HomeOutlined />,
+            icon: <MdOutlineDashboard size={20} />,
             label: <Link to={'/'}>Dashboard</Link>,
         },
         {
@@ -34,6 +37,23 @@ const SiderComponent = (props: IProp) => {
             icon: <UserOutlined />,
             label: <Link to={'/users'}>Manage Users</Link>,
         },
+        {
+            key: "manageProducts",
+            icon: <BsBox2 size={16} />,
+            label: <span>Manage Products</span>,
+            children: [
+                {
+                    key: "products",
+                    icon: <CiBoxList size={20} />,
+                    label: <Link to={'/products'}>Products</Link>,
+                },
+                {
+                    key: "add-product",
+                    icon: <MdOutlinePlaylistAdd size={20} />,
+                    label: <Link to={'/add-product'}>Add product</Link>,
+                }
+            ]
+        }
     ]
     return <>
         <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "white" }}>

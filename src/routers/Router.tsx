@@ -7,6 +7,8 @@ import LoginPage from "@/pages/auth/login";
 import RegisterPage from "@/pages/auth/register";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import UserPage from "@/pages/User";
+import ProductPage from "@/pages/Product";
+import AddProduct from "@/pages/Product/AddProduct";
 
 
 const Routers = () => {
@@ -26,6 +28,8 @@ const Routers = () => {
                     <Route path="/" element={<ProtectedRoute><LayoutAdmin /></ProtectedRoute>} >
                         <Route index element={<AdminPage />} />
                         <Route path="/users" element={<UserPage />} />
+                        <Route path="/products" element={<ProductPage />} />
+                        <Route path="/add-product" element={<AddProduct />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
                 </Routes>

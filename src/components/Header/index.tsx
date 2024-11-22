@@ -43,7 +43,7 @@ const HeaderComponent = (props: IProp) => {
     }
 
     return <>
-        <Header style={{ backgroundColor: "white", borderBottom: "1px solid #f2f6fa", borderLeft: "1px solid #f2f6fa" }} >
+        <Header style={{ backgroundColor: "white", borderBottom: "1px solid #f2f6fa", borderLeft: "1px solid #f2f6fa", paddingLeft: "0" }} >
             <div className="row">
                 <div className="col">
                     <Button
