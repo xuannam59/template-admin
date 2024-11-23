@@ -1,4 +1,5 @@
 import { downloadExcel } from "@/helpers/exportExcel";
+import { IUDataType } from "@/pages/User";
 import { CloudUploadOutlined, ExportOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { Button, notification, Typography } from "antd";
 import dayjs from "dayjs";
@@ -9,10 +10,10 @@ interface IProps {
     setSortQuery: React.Dispatch<React.SetStateAction<string>>;
     setIsModalOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModalOpenImport: React.Dispatch<React.SetStateAction<boolean>>;
-    listUser: any[]
+    listUser: IUDataType[]
 }
 
-const HeaderTable = (props: IProps) => {
+const UserHeaderTable = (props: IProps) => {
     const { setIsModalOpenCreate, setIsModalOpenImport, listUser } = props
     const exportData = () => {
         const data = listUser.map((item) => {
@@ -27,7 +28,7 @@ const HeaderTable = (props: IProps) => {
             }
         })
         if (data.length > 0) {
-            downloadExcel(data);
+            downloadExcel(data, "DataUser");
         } else {
             notification.error({
                 message: "Export error",
@@ -72,4 +73,4 @@ const HeaderTable = (props: IProps) => {
     )
 }
 
-export default HeaderTable;
+export default UserHeaderTable;

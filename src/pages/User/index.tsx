@@ -1,6 +1,6 @@
 import handleAPI from "@/apis/handleAPI";
 import UserImport from "@/components/User/data/UserImport";
-import HeaderTable from "@/components/User/HeaderTable";
+import UserHeaderTable from "@/components/User/UserHeaderTable";
 import InputSearch from "@/components/User/InputSearch";
 import UserModalCreate from "@/components/User/UserModalCreate";
 import UserModalUpdate from "@/components/User/UserModalUpdate";
@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 
-export interface DataType {
+export interface IUDataType {
     _id: string;
     name: string;
     email: string;
@@ -33,7 +33,7 @@ const UserPage = () => {
     const [filter, setFilter] = useState("");
     const [listUser, setListUser] = useState([]);
     const [isOpenDetail, setIsOpenDetail] = useState(false);
-    const [dataViewDetail, setDataViewDetail] = useState<DataType | undefined>(undefined);
+    const [dataViewDetail, setDataViewDetail] = useState<IUDataType | undefined>(undefined);
     const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
     const [isModalOpenUpdate, setIsModalOpenUpdate] = useState(false);
     const [dataSelect, setDataSelect] = useState<any>(undefined);
@@ -46,13 +46,19 @@ const UserPage = () => {
 
     const fetchUser = async () => {
         setIsLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}${filter ? filter : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
-        const res = await handleAPI(`/users?${query}`);
-        if (res.data && res) {
-            setListUser(res.data.result);
-            setTotal(res.data.meta.totalItems);
+        try {
+            let query = `current=${current}&pageSize=${pageSize}${filter ? filter : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
+            const res = await handleAPI(`/users?${query}`);
+            if (res.data && res) {
+                setListUser(res.data.result);
+                setTotal(res.data.meta.totalItems);
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false);
         }
-        setIsLoading(false);
+
     }
 
     const handelDelete = async (id: string) => {
@@ -70,7 +76,7 @@ const UserPage = () => {
         setIsLoading(false)
     }
 
-    const columns: TableColumnsType<DataType> = [
+    const columns: TableColumnsType<IUDataType> = [
         {
             title: 'STT',
             render: (_, record, index) => {
@@ -156,7 +162,7 @@ const UserPage = () => {
         },
     ];
 
-    const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter: any, extra) => {
+    const onChange: TableProps<IUDataType>['onChange'] = (pagination, filters, sorter: any, extra) => {
         if (pagination.current && pagination.current !== current) {
             setCurrent(pagination.current);
         }
@@ -183,7 +189,7 @@ const UserPage = () => {
                 </div>
                 <div className="col-12">
                     <Table
-                        title={() => <HeaderTable
+                        title={() => <UserHeaderTable
                             setFilter={setFilter}
                             setSortQuery={setSortQuery}
                             setIsModalOpenCreate={setIsModalOpenCreate}

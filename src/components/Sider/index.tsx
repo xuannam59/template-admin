@@ -1,4 +1,4 @@
-import { HomeOutlined, UserOutlined } from "@ant-design/icons";
+import { UserOutlined } from "@ant-design/icons";
 import { Menu } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { useEffect, useState } from "react";
@@ -16,7 +16,8 @@ const SiderComponent = (props: IProp) => {
     let location = useLocation();
     useEffect(() => {
         if (location && location.pathname) {
-            const allRoute = ["", "users", "products", "addProduct", "add-product"];
+            const allRoute = ["", "users", "products",
+                "addProduct", "add-product", "update-product"];
             const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
             if (currentRoute) {
                 setActiveMenu(currentRoute);
@@ -31,11 +32,6 @@ const SiderComponent = (props: IProp) => {
             key: 'dashboard',
             icon: <MdOutlineDashboard size={20} />,
             label: <Link to={'/'}>Dashboard</Link>,
-        },
-        {
-            key: 'users',
-            icon: <UserOutlined />,
-            label: <Link to={'/users'}>Manage Users</Link>,
         },
         {
             key: "manageProducts",
@@ -53,14 +49,20 @@ const SiderComponent = (props: IProp) => {
                     label: <Link to={'/add-product'}>Add product</Link>,
                 }
             ]
-        }
+        },
+        {
+            key: 'users',
+            icon: <UserOutlined />,
+            label: <Link to={'/users'}>Manage Users</Link>,
+        },
     ]
     return <>
-        <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: "white" }}>
+        <Sider trigger={null} collapsible collapsed={collapsed} width={"220"} style={{ background: "white" }}>
             <div style={{ height: 32, margin: 16, textAlign: 'center', lineHeight: "32px" }}>
                 Admin
             </div>
             <Menu
+                className="menu-sider"
                 defaultSelectedKeys={['dashboard']}
                 selectedKeys={[activeMenu]}
                 theme="light"

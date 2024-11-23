@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import UserPage from "@/pages/User";
 import ProductPage from "@/pages/Product";
 import AddProduct from "@/pages/Product/AddProduct";
+import UpdateProduct from "@/pages/Product/UpdateProduct";
 
 
 const Routers = () => {
@@ -30,6 +31,7 @@ const Routers = () => {
                         <Route path="/users" element={<UserPage />} />
                         <Route path="/products" element={<ProductPage />} />
                         <Route path="/add-product" element={<AddProduct />} />
+                        <Route path="/products/update-product/:id" element={<UpdateProduct />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
                 </Routes>
