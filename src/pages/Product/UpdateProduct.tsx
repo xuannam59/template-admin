@@ -1,11 +1,12 @@
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, Form, GetProp, Input, InputNumber, message, notification, Radio, Select, Space, Typography, Upload, UploadFile, UploadProps } from 'antd'
+import { Button, Card, Form, GetProp, Input, InputNumber, message, notification, Radio, Select, Space, TreeSelect, Typography, Upload, UploadFile, UploadProps } from 'antd'
 import { useEffect, useState } from 'react'
 import type { UploadRequestOption } from "rc-upload/lib/interface";
 import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
 import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import Loading from '@/components/Loading';
+import { tree } from '@/helpers/createTree';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -57,9 +58,36 @@ const UpdateProduct = () => {
     const [loading, setLoading] = useState(false);
     const [loadingSlider, setLoadingSlider] = useState(false);
     const [loadingForm, setLoadingForm] = useState(false);
+    const [listCategory, setListCategory] = useState<any[]>();
+
     useEffect(() => {
         fetchProduct();
     }, []);
+
+    useEffect(() => {
+        getData()
+    }, []);
+
+    const getData = async () => {
+        const api = `/categories?current=1&pageSize=1000`
+        try {
+            const res = await handleAPI(api)
+            if (res && res.data) {
+                const categories = res.data.result.map((item: any) => {
+                    return {
+                        id: item._id,
+                        title: item.title,
+                        value: item._id,
+                        parentId: item.parentId ? item.parentId._id : ""
+                    }
+                })
+                const categoryTree = tree(categories, "");
+                setListCategory(categoryTree);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(() => {
         if (dataUpdate) {
@@ -375,10 +403,18 @@ const UpdateProduct = () => {
                                     name="categoryId"
                                     label="Danh mục sản phẩm"
                                     className='mb-0'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: "Vui lòng không để trống"
+                                        }
+                                    ]}
                                 >
-                                    <Select placeholder="Danh mục sản phẩm" options={[
-                                        { label: "Vui lòng chọn danh mục cha", disabled: true }
-                                    ]} />
+                                    <TreeSelect
+                                        placeholder="Lữa chọn danh mục"
+                                        treeDefaultExpandAll
+                                        treeData={listCategory}
+                                    />
                                 </Form.Item>
                             </Card>
 

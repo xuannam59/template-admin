@@ -17,6 +17,10 @@ export interface IPDataType {
     discountPercentage: number;
     quantity: number,
     sliders: string[],
+    categoryId: {
+        _id: string,
+        title: string
+    },
     status: string,
     createdAt: Date;
     updatedAt: Date;
@@ -107,6 +111,15 @@ const ProductPage = () => {
             sorter: true,
         },
         {
+            title: 'Danh mục',
+            render: (_, record) => {
+                return (
+                    <>{record.categoryId.title}</>
+                )
+            },
+            sorter: true,
+        },
+        {
             title: 'Giá',
             dataIndex: 'price',
             sorter: true,
@@ -117,9 +130,9 @@ const ProductPage = () => {
             }
         },
         {
-            title: 'Phần trăm giảm giá',
+            title: '% giảm giá',
             dataIndex: 'discountPercentage',
-            sorter: true,
+            width: 120,
             render: (text, record) => {
                 return <>
                     {(Math.round(text * 100) / 100).toFixed(2)}%

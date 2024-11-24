@@ -10,6 +10,7 @@ import UserPage from "@/pages/User";
 import ProductPage from "@/pages/Product";
 import AddProduct from "@/pages/Product/AddProduct";
 import UpdateProduct from "@/pages/Product/UpdateProduct";
+import CategoryPage from "@/pages/Category";
 
 
 const Routers = () => {
@@ -32,6 +33,7 @@ const Routers = () => {
                         <Route path="/products" element={<ProductPage />} />
                         <Route path="/add-product" element={<AddProduct />} />
                         <Route path="/products/update-product/:id" element={<UpdateProduct />} />
+                        <Route path="/categories" element={<CategoryPage />} />
                     </Route>
                     <Route path="*" element={<NotFound />} />
                 </Routes>

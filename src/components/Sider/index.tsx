@@ -2,8 +2,10 @@ import { UserOutlined } from "@ant-design/icons";
 import { Menu } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { useEffect, useState } from "react";
+import { BiCategory } from "react-icons/bi";
 import { BsBox2 } from "react-icons/bs";
 import { CiBoxList } from "react-icons/ci";
+import { HiOutlineUserGroup } from "react-icons/hi";
 import { MdOutlineDashboard, MdOutlinePlaylistAdd } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 
@@ -17,7 +19,7 @@ const SiderComponent = (props: IProp) => {
     useEffect(() => {
         if (location && location.pathname) {
             const allRoute = ["", "users", "products",
-                "addProduct", "add-product", "update-product"];
+                "addProduct", "add-product", "update-product", "categories"];
             const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
             if (currentRoute) {
                 setActiveMenu(currentRoute);
@@ -51,8 +53,13 @@ const SiderComponent = (props: IProp) => {
             ]
         },
         {
+            key: 'categories',
+            icon: <BiCategory size={20} />,
+            label: <Link to={'/categories'}>Manage categories</Link>,
+        },
+        {
             key: 'users',
-            icon: <UserOutlined />,
+            icon: <HiOutlineUserGroup size={20} />,
             label: <Link to={'/users'}>Manage Users</Link>,
         },
     ]
