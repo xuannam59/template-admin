@@ -155,7 +155,7 @@ const CategoryPage = () => {
         const res = await handleAPI(`/categories/${id}`, "", "delete");
         if (res && res.data) {
             fetchCategories();
-            message.success("Xoá user thành công");
+            message.success("Xoá danh mục thành công");
         } else {
             notification.error({
                 message: "Có lỗi xảy ra",

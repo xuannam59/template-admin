@@ -22,7 +22,7 @@ const getBase64 = (img: FileType, callback: (url: string) => void) => {
 };
 
 const beforeUpload = (file: FileType) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/webp';
     if (!isJpgOrPng) {
         message.error('You can only upload JPG/PNG file!');
     }

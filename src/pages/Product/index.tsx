@@ -1,6 +1,7 @@
 import handleAPI from '@/apis/handleAPI'
 import ProductHeaderTable from '@/components/Product/ProductHeaderTable'
 import ProductInputSearch from '@/components/Product/ProductInputSearch'
+import ProductViewDetail from '@/components/Product/ProductViewDetail'
 import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
 import { Avatar, Button, Image, message, notification, Popconfirm, Table, TableColumnsType, TableProps, Typography } from 'antd'
 import dayjs from 'dayjs'
@@ -16,7 +17,7 @@ export interface IPDataType {
     price: number;
     discountPercentage: number;
     quantity: number,
-    sliders: string[],
+    slider: string[],
     categoryId: {
         _id: string,
         title: string
@@ -34,6 +35,8 @@ const ProductPage = () => {
     const [total, setTotal] = useState(0);
     const [sortQuery, setSortQuery] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
+    const [isOpenDetail, setIsOpenDetail] = useState(false);
+    const [dataViewDetail, setDataViewDetail] = useState<IPDataType | undefined>(undefined);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -88,8 +91,8 @@ const ProductPage = () => {
             width: 60,
             render: (text, record) => {
                 return <Link to={''} onClick={() => {
-                    // setDataViewDetail(record);
-                    // setIsOpenDetail(true)
+                    setDataViewDetail(record);
+                    setIsOpenDetail(true)
                 }}
                 >{text}</Link>
             }
@@ -109,19 +112,22 @@ const ProductPage = () => {
             title: 'Tên sản phẩm',
             dataIndex: 'title',
             sorter: true,
+            minWidth: 150
         },
         {
             title: 'Danh mục',
+            minWidth: 120,
+            sorter: true,
             render: (_, record) => {
                 return (
                     <>{record.categoryId.title}</>
                 )
             },
-            sorter: true,
         },
         {
             title: 'Giá',
             dataIndex: 'price',
+            minWidth: 100,
             sorter: true,
             render: (text, record) => {
                 return <>
@@ -132,12 +138,17 @@ const ProductPage = () => {
         {
             title: '% giảm giá',
             dataIndex: 'discountPercentage',
-            width: 120,
+            minWidth: 120,
             render: (text, record) => {
                 return <>
                     {(Math.round(text * 100) / 100).toFixed(2)}%
                 </>
             }
+        },
+        {
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            minWidth: 100
         },
         {
             title: 'Ngày cập nhập',
@@ -234,6 +245,14 @@ const ProductPage = () => {
                     />
                 </div>
             </div>
+            <ProductViewDetail
+                isOpenDetail={isOpenDetail}
+                onClose={() => {
+                    setDataViewDetail(undefined);
+                    setIsOpenDetail(false)
+                }}
+                dataViewDetail={dataViewDetail}
+            />
         </div>
     )
 }

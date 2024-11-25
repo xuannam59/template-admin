@@ -1,10 +1,10 @@
+import { IUDataType } from "@/pages/User";
 import { Badge, Descriptions, Drawer } from "antd";
-import { DataType } from "./UserTable";
 import dayjs from "dayjs";
 
 interface IProps {
     isOpenDetail: boolean,
-    dataViewDetail: DataType | undefined,
+    dataViewDetail: IUDataType | undefined,
     onClose: any
 }
 
