@@ -5,6 +5,8 @@ import type { UploadRequestOption } from "rc-upload/lib/interface";
 import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
 import { useNavigate } from 'react-router-dom';
 import { tree } from '@/helpers/createTree';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
@@ -43,6 +45,7 @@ const AddProduct = () => {
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [listCategory, setListCategory] = useState<any[]>();
+    const [description, setDescription] = useState("");
 
 
     const navigate = useNavigate();
@@ -73,16 +76,17 @@ const AddProduct = () => {
     }
 
     const onFinish = async (value: any) => {
-        const { categoryId, description, discountPercentage,
+        const { categoryId, discountPercentage,
             price, status, quantity, title } = value
         const dataSlider = slider.map(item => item.name)
         const api = "/products";
         try {
             const res = await handleAPI(api,
                 {
-                    categoryId, description, discountPercentage,
+                    categoryId, discountPercentage,
                     price, status, quantity,
                     title, thumbnail,
+                    description: description,
                     slider: dataSlider
                 },
                 "post")
@@ -303,18 +307,19 @@ const AddProduct = () => {
                                     </Form.Item>
                                 </div>
                             </div>
-                            <Form.Item
-                                label="Mô tả"
-                                name="description"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Vui lòng không để trống"
-                                    }
-                                ]}
+                            <Card
+                                title="Miêu tả"
+                                bordered={false}
+                                size="small"
+                                style={{ marginBottom: 20 }}
                             >
-                                <Input.TextArea placeholder='Mô tả' rows={10} />
-                            </Form.Item>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={description}
+                                    onChange={setDescription}
+                                />
+                            </Card>
+
                         </div>
                         <div className="col-4">
                             <Card className='mt-4' size='small'>

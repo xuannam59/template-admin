@@ -7,8 +7,15 @@ export interface authSate {
         _id: string;
         email: string;
         name: string;
-        role: string;
-        avatar: string
+        role: {
+            _id: string,
+            name: string
+        };
+        avatar: string;
+        permission: {
+            _id: string,
+            name: string
+        }[]
     }
 }
 
@@ -19,8 +26,12 @@ const initialState: authSate = {
         _id: "",
         email: "",
         name: "",
-        role: "",
-        avatar: ""
+        role: {
+            _id: "",
+            name: ""
+        },
+        avatar: "",
+        permission: []
     }
 }
 
@@ -46,8 +57,12 @@ const authSlide = createSlice({
                 _id: "",
                 email: "",
                 name: "",
-                role: "",
-                avatar: ""
+                role: {
+                    _id: "",
+                    name: ""
+                },
+                avatar: "",
+                permission: []
             };
         }
     }

@@ -25,10 +25,11 @@ const ToggleCategory = (props: IProps) => {
         if (selectData) {
             const data = {
                 title: selectData.title,
-                parentId: selectData.parentId._id ?? "",
+                parentId: selectData?.parentId ?? "",
                 description: selectData.description,
                 status: selectData.status
             }
+            console.log(selectData);
             form.setFieldsValue(data);
         }
     }, [selectData]);
@@ -55,7 +56,7 @@ const ToggleCategory = (props: IProps) => {
 
     const onFinish = async (values: ICDataType) => {
         setIsLoading(true)
-        const api = `/categories/${selectData ? selectData._id : ""}`;
+        const api = `/categories/${selectData ? selectData.id : ""}`;
         try {
             const res = await handleAPI(api, values, `${selectData ? "patch" : "post"}`);
             if (res && res.data) {
