@@ -1,12 +1,12 @@
-import { UserOutlined } from "@ant-design/icons";
 import { Menu } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { useEffect, useState } from "react";
-import { BiCategory } from "react-icons/bi";
-import { BsBox2 } from "react-icons/bs";
-import { CiBoxList } from "react-icons/ci";
-import { HiOutlineUserGroup } from "react-icons/hi";
-import { MdOutlineDashboard, MdOutlinePlaylistAdd } from "react-icons/md";
+import {
+    TbBrandProducthunt, TbCategory, TbChecklist,
+    TbHome, TbPackages, TbPlaylistAdd,
+    TbSettings, TbSquareRoundedPercentage,
+    TbUsersGroup
+} from "react-icons/tb";
 import { Link, useLocation } from "react-router-dom";
 
 interface IProp {
@@ -18,8 +18,11 @@ const SiderComponent = (props: IProp) => {
     let location = useLocation();
     useEffect(() => {
         if (location && location.pathname) {
-            const allRoute = ["", "users", "products",
-                "addProduct", "add-product", "update-product", "categories"];
+            const allRoute = [
+                "", "users", "products",
+                "addProduct", "add-product", "update-product",
+                "categories", "general-settings", "orders",
+                "promotions"];
             const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
             if (currentRoute) {
                 setActiveMenu(currentRoute);
@@ -32,35 +35,50 @@ const SiderComponent = (props: IProp) => {
     const items = [
         {
             key: 'dashboard',
-            icon: <MdOutlineDashboard size={20} />,
+            icon: <TbHome size={24} />,
             label: <Link to={'/'}>Dashboard</Link>,
         },
         {
             key: "manageProducts",
-            icon: <BsBox2 size={16} />,
+            icon: <TbBrandProducthunt size={24} />,
             label: <span>Manage Products</span>,
             children: [
                 {
                     key: "products",
-                    icon: <CiBoxList size={20} />,
+                    icon: <TbChecklist size={24} />,
                     label: <Link to={'/products'}>Products</Link>,
                 },
                 {
                     key: "add-product",
-                    icon: <MdOutlinePlaylistAdd size={20} />,
+                    icon: <TbPlaylistAdd size={24} />,
                     label: <Link to={'/add-product'}>Add product</Link>,
                 }
             ]
         },
         {
             key: 'categories',
-            icon: <BiCategory size={20} />,
+            icon: <TbCategory size={24} />,
             label: <Link to={'/categories'}>Manage categories</Link>,
         },
         {
             key: 'users',
-            icon: <HiOutlineUserGroup size={20} />,
+            icon: <TbUsersGroup size={24} />,
             label: <Link to={'/users'}>Manage Users</Link>,
+        },
+        {
+            key: 'orders',
+            icon: <TbPackages size={24} />,
+            label: <Link to={'/orders'}>Manage order</Link>,
+        },
+        {
+            key: 'general-settings',
+            icon: <TbSettings size={24} />,
+            label: <Link to={'/general-settings'}>Settings</Link>,
+        },
+        {
+            key: 'promotions',
+            icon: <TbSquareRoundedPercentage size={24} />,
+            label: <Link to={'/promotions'}>Promotions</Link>,
         },
     ]
     return <>

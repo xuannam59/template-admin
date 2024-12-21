@@ -1,6 +1,6 @@
 import handleAPI from "@/apis/handleAPI"
 import { Divider, Form, Input, message, Modal, notification, Select } from "antd"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 interface IProps {
     isModalOpenCreate: boolean
@@ -11,12 +11,42 @@ interface IProps {
 const UserModalCreate = (props: IProps) => {
     const { isModalOpenCreate, setIsModalOpenCreate, fetchUser } = props
     const [isLoading, setIsLoading] = useState(false);
+    const [roles, setRoles] = useState();
     const [form] = Form.useForm()
+
+    useEffect(() => {
+        getData()
+    }, []);
+
+    const getData = async () => {
+        const api = `/roles?current=1&pageSize=1000`
+        try {
+            const res = await handleAPI(api)
+            if (res && res.data) {
+                const data = res.data.result.map((item: any) => {
+                    return {
+                        label: item.name,
+                        value: item._id,
+                    }
+                })
+                setRoles(data);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const onFinish = async (value: any) => {
         setIsLoading(true)
         const api = '/users'
-        const res = await handleAPI(api, value, "post");
+        const data = {
+            ...value,
+            age: 0,
+            address: "",
+            gender: "",
+            avatar: "",
+        }
+        const res = await handleAPI(api, data, "post");
         if (res && res.data) {
             onCancel();
             fetchUser();
@@ -101,16 +131,7 @@ const UserModalCreate = (props: IProps) => {
                     }]}
                 >
 
-                    <Select placeholder="Vai trò" options={[
-                        {
-                            label: "USER",
-                            value: "USER"
-                        },
-                        {
-                            label: "ADMIN",
-                            value: "ADMIN"
-                        }
-                    ]} />
+                    <Select placeholder="Vai trò" options={roles} />
                 </Form.Item>
                 <Form.Item
                     name={"phone"}

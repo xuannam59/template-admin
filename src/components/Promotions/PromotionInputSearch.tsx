@@ -1,11 +1,11 @@
 import { replaceName } from "@/helpers/replaceName";
-import { Button, Form, Input } from "antd"
+import { Button, Form, Input, notification } from "antd"
 
 interface IProps {
     setFilterQuery: React.Dispatch<React.SetStateAction<string>>
 }
 
-const CategoryInputSearch = (props: IProps) => {
+const PromotionInputSearch = (props: IProps) => {
     const [form] = Form.useForm();
 
     const onFinish = (values: any) => {
@@ -27,9 +27,9 @@ const CategoryInputSearch = (props: IProps) => {
                 <div className="col">
                     <Form.Item
                         name={"title"}
-                        label={"Tên danh mục"}
+                        label={"Tên giảm giá"}
                     >
-                        <Input placeholder="Tên danh mục"
+                        <Input placeholder="Tên giảm giá"
                             onKeyDown={(e) => {
                                 if (e.code === "Enter") {
                                     form.submit()
@@ -55,4 +55,4 @@ const CategoryInputSearch = (props: IProps) => {
     </>)
 }
 
-export default CategoryInputSearch
+export default PromotionInputSearch

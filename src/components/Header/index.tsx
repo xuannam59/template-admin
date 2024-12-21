@@ -1,16 +1,16 @@
 import handleAPI from "@/apis/handleAPI"
 import { useAppDispatch, useAppSelector } from "@/redux/hook"
 import { doLogOutAction } from "@/redux/reducers/auth.reducer"
-import { DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined } from "@ant-design/icons"
-import { Avatar, Button, Dropdown, message, Space } from "antd"
+import { Avatar, Button, Dropdown, message, Space, Typography } from "antd"
 import { Header } from "antd/es/layout/layout"
+import { TbMenu2, TbMenuDeep } from "react-icons/tb"
 import { useNavigate } from "react-router-dom"
 
 interface IProp {
     collapsed: boolean,
     setCollapsed: React.Dispatch<React.SetStateAction<boolean>>
 }
-
+const { Text } = Typography
 const HeaderComponent = (props: IProp) => {
     const { collapsed, setCollapsed } = props;
     const user = useAppSelector(state => state.auth.user);
@@ -48,7 +48,7 @@ const HeaderComponent = (props: IProp) => {
                 <div className="col">
                     <Button
                         type="text"
-                        icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                        icon={collapsed ? <TbMenu2 /> : <TbMenuDeep />}
                         onClick={() => setCollapsed(!collapsed)}
                         style={{
                             fontSize: '16px',
@@ -58,13 +58,13 @@ const HeaderComponent = (props: IProp) => {
                     />
                 </div>
                 <div className="col text-end">
-                    <Dropdown menu={{ items: items }} trigger={['click']}>
-                        <span style={{ cursor: "pointer" }}>
-                            <Space>
-                                <Avatar size={38} src={user.avatar} />
+                    <Dropdown menu={{ items: items }} trigger={['click']} arrow>
+                        <Space style={{ cursor: "pointer" }}>
+                            <Avatar size={38} src={user.avatar} />
+                            <Text>
                                 {user?.name}
-                            </Space>
-                        </span>
+                            </Text>
+                        </Space>
                     </Dropdown>
                 </div>
             </div>

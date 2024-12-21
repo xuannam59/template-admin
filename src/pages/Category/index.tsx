@@ -43,7 +43,7 @@ const CategoryPage = () => {
     const fetchCategories = async () => {
         setIsLoading(true);
         try {
-            let query = `current=${current}&pageSize=${pageSize}${filterQuery ? filterQuery : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
+            let query = `current=${current}&pageSize=${pageSize}${filterQuery ? filterQuery : ""}`;
             const res = await handleAPI(`/categories?${query}`);
             if (res.data && res) {
 
@@ -57,7 +57,7 @@ const CategoryPage = () => {
                         parentId: item?.parentId?._id ?? ""
                     }
                 })
-                const result: any = tree(data, "");
+                const result: any = tree(data, data[0]?.parentId ?? "");
                 setListCategory(result)
                 // setListCategory(res.data.result);
                 // setTotal(res.data.meta.totalItems);
@@ -85,7 +85,7 @@ const CategoryPage = () => {
             title: 'Tên danh mục',
             dataIndex: 'title',
             width: 200,
-            sorter: true,
+
         },
         {
             title: 'Mô tả',
@@ -170,12 +170,6 @@ const CategoryPage = () => {
         if (pagination.pageSize && pagination.pageSize !== pageSize) {
             setPageSize(pagination.pageSize);
             setCurrent(1);
-        }
-        if (sorter.field && sorter) {
-            let sort1 = (sorter.order === "ascend" ? "" : "-") + sorter.field;
-            setSortQuery(sort1);
-        } else {
-            setSortQuery("");
         }
     }
     return (

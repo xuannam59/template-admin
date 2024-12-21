@@ -12,11 +12,43 @@ interface IProps {
 const UserModalUpdate = (props: IProps) => {
     const { isModalOpenUpdate, fetchUser, dataSelect, onclose } = props
     const [isLoading, setIsLoading] = useState(false);
+    const [roles, setRoles] = useState();
     const [form] = Form.useForm();
 
     useEffect(() => {
-        form.setFieldsValue(dataSelect)
+        if (dataSelect) {
+            const data = {
+                name: dataSelect.name,
+                email: dataSelect.email,
+                role: dataSelect?.role?._id,
+                phone: dataSelect.phone
+            };
+            form.setFieldsValue(data)
+        }
     }, [dataSelect]);
+
+    useEffect(() => {
+        getData()
+    }, []);
+
+    const getData = async () => {
+        const api = `/roles?current=1&pageSize=1000`
+        try {
+            const res = await handleAPI(api)
+            if (res && res.data) {
+                const data = res.data.result.map((item: any) => {
+                    return {
+                        label: item.name,
+                        value: item._id,
+                    }
+                })
+                console.log(data);
+                setRoles(data);
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const onFinish = async (value: any) => {
         setIsLoading(true)
@@ -84,16 +116,7 @@ const UserModalUpdate = (props: IProps) => {
                         message: "Vui lòng không để trống"
                     }]}
                 >
-                    <Select placeholder="Vai trò" options={[
-                        {
-                            label: "USER",
-                            value: "USER"
-                        },
-                        {
-                            label: "ADMIN",
-                            value: "ADMIN"
-                        }
-                    ]} />
+                    <Select placeholder="Vai trò" options={roles} />
                 </Form.Item>
                 <Form.Item
                     name={"phone"}

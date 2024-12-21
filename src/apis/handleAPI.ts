@@ -18,7 +18,7 @@ const handleAPI = async (
     });
 }
 
-export const handleUploadFileAPI = (file: any) => {
+export const handleUploadFileAPI = (file: any): Promise<response> => {
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
     return axios({

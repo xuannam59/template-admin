@@ -9,7 +9,7 @@ const NotPermitted = () => {
             title="403"
             subTitle="Sorry, you are not authorized to access this page."
             extra={<Button type="primary"
-                onClick={() => navigate(-1)}>Trở lại</Button>}
+                onClick={() => navigate("/auth/login")}>Trở về đặng nhập</Button>}
         />
     </>
 }

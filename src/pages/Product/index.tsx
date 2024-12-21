@@ -3,12 +3,10 @@ import ProductHeaderTable from '@/components/Product/ProductHeaderTable'
 import ProductInputSearch from '@/components/Product/ProductInputSearch'
 import ProductViewDetail from '@/components/Product/ProductViewDetail'
 import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
-import { Avatar, Button, Image, message, notification, Popconfirm, Table, TableColumnsType, TableProps, Typography } from 'antd'
+import { Avatar, message, notification, Popconfirm, Table, TableColumnsType, TableProps, Typography } from 'antd'
 import dayjs from 'dayjs'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-
-const { Title } = Typography
 
 export interface IPDataType {
     _id: string;
@@ -160,7 +158,7 @@ const ProductPage = () => {
         {
             title: 'Action',
             fixed: "right",
-            render: (text, record) => {
+            render: (item: IPDataType) => {
                 return (
                     <>
                         <div className="d-flex gap-3">
@@ -168,18 +166,18 @@ const ProductPage = () => {
                                 style={{ fontSize: '18px', cursor: "pointer" }}
                                 twoToneColor="#f57800"
                                 onClick={() => {
-                                    navigate(`/products/update-product/${record._id}`);
+                                    navigate(`/products/update-product/${item._id}`);
                                 }}
                             />
 
                             <Popconfirm
                                 placement="bottomRight"
-                                title={"Xoá người dùng"}
-                                description={"Bạn chắc chắn muốn xoá người dùng này"}
+                                title={"Xoá sản phẩm"}
+                                description={"Bạn chắc chắn muốn xoá sản phẩm này"}
                                 okText="Yes"
                                 cancelText="No"
                                 onConfirm={() => {
-                                    handelDelete(record._id);
+                                    handelDelete(item._id);
                                 }}
                             >
                                 <DeleteTwoTone
@@ -211,7 +209,6 @@ const ProductPage = () => {
     }
     return (
         <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
-            <Title level={3}>Quản lý Sản phẩm</Title>
             <div className="row">
                 <div className="col-12 mb-3">
                     <ProductInputSearch

@@ -17,7 +17,10 @@ export interface IUDataType {
     name: string;
     email: string;
     phone: string;
-    role: string;
+    role: {
+        _id: string,
+        name: string
+    };
     createdAt: Date;
     updatedAt: Date;
 }
@@ -116,6 +119,9 @@ const UserPage = () => {
         {
             title: 'Vai trò',
             dataIndex: 'role',
+            render: (_, record) => {
+                return <span>{record.role.name}</span>
+            }
         },
         {
             title: 'Ngày cập nhập',

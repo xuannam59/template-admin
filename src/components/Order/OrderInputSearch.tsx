@@ -5,7 +5,7 @@ interface IProps {
     setFilterQuery: React.Dispatch<React.SetStateAction<string>>
 }
 
-const CategoryInputSearch = (props: IProps) => {
+const OrderInputSearch = (props: IProps) => {
     const [form] = Form.useForm();
 
     const onFinish = (values: any) => {
@@ -27,9 +27,9 @@ const CategoryInputSearch = (props: IProps) => {
                 <div className="col">
                     <Form.Item
                         name={"title"}
-                        label={"Tên danh mục"}
+                        label={"Tên khách hàng"}
                     >
-                        <Input placeholder="Tên danh mục"
+                        <Input placeholder="Tên khách hàng"
                             onKeyDown={(e) => {
                                 if (e.code === "Enter") {
                                     form.submit()
@@ -55,4 +55,4 @@ const CategoryInputSearch = (props: IProps) => {
     </>)
 }
 
-export default CategoryInputSearch
+export default OrderInputSearch
