@@ -1,7 +1,7 @@
-import handleAPI from '@/apis/handleAPI';
+import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
 import { tree } from '@/helpers/createTree';
 import { ICDataType } from '@/pages/Category';
-import { Form, Input, message, Modal, notification, Radio, Select, TreeSelect } from 'antd';
+import { Form, Input, message, Modal, notification, Radio, Select, TreeSelect, Upload, UploadProps } from 'antd';
 import { useEffect, useState } from 'react'
 
 interface IProps {
@@ -9,13 +9,13 @@ interface IProps {
     onClose: any;
     selectData: ICDataType | undefined;
     fetchCategories: any,
-
 }
 
 const ToggleCategory = (props: IProps) => {
     const { isModalOpen, fetchCategories, onClose, selectData } = props
     const [form] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
+    const [imageUpload, setImageUpload] = useState<any[]>([]);
     const [listCategory, setListCategory] = useState<any[]>();
     useEffect(() => {
         getData()
@@ -25,11 +25,17 @@ const ToggleCategory = (props: IProps) => {
         if (selectData) {
             const data = {
                 title: selectData.title,
-                parentId: selectData?.parentId ?? "",
+                parentId: selectData.parentId ? selectData.parentId : undefined,
                 description: selectData.description,
                 status: selectData.status
             }
-            console.log(selectData);
+            if (selectData.image) {
+                setImageUpload([{
+                    uuid: "-1",
+                    url: selectData.image,
+                    status: "done"
+                }])
+            }
             form.setFieldsValue(data);
         }
     }, [selectData]);
@@ -54,23 +60,29 @@ const ToggleCategory = (props: IProps) => {
         }
     }
 
-    const onFinish = async (values: ICDataType) => {
+    const onFinish = async (values: any) => {
         setIsLoading(true)
         const api = `/categories/${selectData ? selectData.id : ""}`;
         try {
-            const res = await handleAPI(api, values, `${selectData ? "patch" : "post"}`);
+            const data = {
+                title: values.title,
+                parentId: values.parentId,
+                description: values.description,
+                status: values.status,
+                image: ""
+            }
+
+            data.image =
+                imageUpload.length > 0 && imageUpload[0].originFileObj
+                    ? (await handleUploadFileAPI(imageUpload[0].originFileObj)).data.fileUpload
+                    : imageUpload[0]?.url ?? "";
+            console.log(data);
+            const res = await handleAPI(api, data, `${selectData ? "patch" : "post"}`);
             if (res && res.data) {
-                if (selectData) {
-                    message.success("Cập nhập danh mục thành công");
-                    getData();
-                    fetchCategories();
-                    onCancel();
-                } else {
-                    message.success("Tạo danh mục thành công");
-                    getData();
-                    fetchCategories();
-                    onCancel();
-                }
+                message.success(`${selectData ? "Cập nhập" : "Tạo"} danh mục thành công`);
+                getData();
+                fetchCategories();
+                onCancel();
             } else {
                 notification.error({
                     message: "Có lỗi xảy ra",
@@ -84,8 +96,25 @@ const ToggleCategory = (props: IProps) => {
         }
     }
 
+    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
+        const items = newFileList.map((item) =>
+            item.originFileObj
+                ? {
+                    ...item,
+                    url: item.originFileObj
+                        ? URL.createObjectURL(item.originFileObj)
+                        : '',
+                    status: 'done',
+                }
+                : { ...item }
+        );
+
+        setImageUpload(items);
+    };
+
     const onCancel = () => {
         form.resetFields();
+        setImageUpload([]);
         onClose();
     }
     return (
@@ -102,13 +131,22 @@ const ToggleCategory = (props: IProps) => {
                     loading: isLoading
                 }}
             >
+                <Upload
+                    accept='image/*'
+                    fileList={imageUpload}
+                    maxCount={1}
+                    multiple={false}
+                    listType='picture-card'
+                    className='mb-2'
+                    onChange={handleChange}
+                >
+                    {imageUpload.length === 0 ? 'Upload' : null}
+                </Upload>
                 <Form
                     form={form}
                     layout={'vertical'}
                     onFinish={onFinish}
-                    initialValues={{
-                        "status": "active"
-                    }}
+                    disabled={isLoading}
                 >
                     <Form.Item
                         label="Tên danh mục"
@@ -143,6 +181,7 @@ const ToggleCategory = (props: IProps) => {
                         label="Trạng thái"
                         name="status"
                         className='mb-0'
+                        initialValue={"active"}
                         rules={[
                             {
                                 required: true,

@@ -186,7 +186,6 @@ const UserPage = () => {
 
     return (<>
         <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
-            <Title level={3}>Quản lý người dùng</Title>
             <div className="row">
                 <div className="col-12 mb-3">
                     <InputSearch

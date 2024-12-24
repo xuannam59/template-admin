@@ -1,4 +1,6 @@
 import axios from "axios";
+import { Mutex } from "async-mutex";
+
 
 
 const baseURL = import.meta.env.VITE_BACKEND_URL;
@@ -7,15 +9,18 @@ const instance = axios.create({
     withCredentials: true,
 });
 
-const handleRefreshToken = async (): Promise<any> => {
-    const api = "/auth/refresh-token";
-    const res = await instance.post(api);
-    if (res && res.data) return res.data.access_token;
-    else return null;
-}
-
 
 const NO_RETRY_HEADER = 'x-no-retry'
+const mutex = new Mutex();
+
+const handleRefreshToken = async (): Promise<string | null> => {
+    return await mutex.runExclusive(async () => {
+        const res = await instance.post('/auth/refresh-token');
+        if (res && res.data) return res.data.access_token;
+        else return null;
+    })
+}
+
 
 // Add a request interceptor
 instance.interceptors.request.use(function (config) {

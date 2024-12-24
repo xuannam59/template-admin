@@ -122,7 +122,6 @@ const OrderPage = () => {
     }
     return (
         <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
-            <Title level={3}>Quản lý đơn hàng</Title>
             <div className="row">
                 <div className="col-12 mb-3">
                     <OrderInputSearch

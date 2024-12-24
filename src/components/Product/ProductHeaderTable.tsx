@@ -49,7 +49,7 @@ const ProductHeaderTable = (props: IProps) => {
                     <Button
                         icon={<PlusOutlined />}
                         type="primary"
-                        onClick={() => navigate('/add-product')}
+                        onClick={() => navigate('/products/create')}
                     >Thêm mới</Button>
                     <Button onClick={() => {
                         setFilterQuery("")

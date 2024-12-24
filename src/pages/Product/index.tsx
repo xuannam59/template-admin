@@ -8,18 +8,20 @@ import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-export interface IPDataType {
+export interface IProducts {
     _id: string;
     title: string;
-    thumbnail: string;
+    images: string[];
     price: number;
     discountPercentage: number;
-    quantity: number,
-    slider: string[],
     categoryId: {
         _id: string,
         title: string
     },
+    versions: {
+        color: string,
+        quantity: number
+    }[];
     status: string,
     createdAt: Date;
     updatedAt: Date;
@@ -34,7 +36,7 @@ const ProductPage = () => {
     const [sortQuery, setSortQuery] = useState("");
     const [filterQuery, setFilterQuery] = useState("");
     const [isOpenDetail, setIsOpenDetail] = useState(false);
-    const [dataViewDetail, setDataViewDetail] = useState<IPDataType | undefined>(undefined);
+    const [dataViewDetail, setDataViewDetail] = useState<IProducts | undefined>(undefined);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -73,7 +75,7 @@ const ProductPage = () => {
         setIsLoading(false)
     }
 
-    const columns: TableColumnsType<IPDataType> = [
+    const columns: TableColumnsType<IProducts> = [
         {
             title: 'STT',
             render: (_, record, index) => {
@@ -97,11 +99,10 @@ const ProductPage = () => {
         },
         {
             title: 'Ảnh',
-            dataIndex: 'thumbnail',
             fixed: 'left',
-            render: (text, record) => {
+            render: (item: IProducts) => {
                 return <Avatar
-                    src={text}
+                    src={item.images[0]}
                     size={37}
                 />
             }
@@ -116,9 +117,9 @@ const ProductPage = () => {
             title: 'Danh mục',
             minWidth: 120,
             sorter: true,
-            render: (_, record) => {
+            render: (item: IProducts) => {
                 return (
-                    <>{record.categoryId.title}</>
+                    <>{item.categoryId.title}</>
                 )
             },
         },
@@ -127,7 +128,7 @@ const ProductPage = () => {
             dataIndex: 'price',
             minWidth: 100,
             sorter: true,
-            render: (text, record) => {
+            render: (text) => {
                 return <>
                     {text.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })}
                 </>
@@ -137,16 +138,25 @@ const ProductPage = () => {
             title: '% giảm giá',
             dataIndex: 'discountPercentage',
             minWidth: 120,
-            render: (text, record) => {
+            render: (item) => {
                 return <>
-                    {(Math.round(text * 100) / 100).toFixed(2)}%
+                    {(Math.round(item * 100) / 100).toFixed(2)}%
                 </>
             }
         },
         {
             title: 'Số lượng',
-            dataIndex: 'quantity',
-            minWidth: 100
+            minWidth: 100,
+            render: (item: IProducts) => {
+                const quantity = item.versions.reduce(
+                    (accumulator, currentValue) => accumulator + currentValue.quantity, 0
+                )
+                return <>
+                    {
+                        quantity
+                    }
+                </>
+            }
         },
         {
             title: 'Ngày cập nhập',
@@ -158,7 +168,7 @@ const ProductPage = () => {
         {
             title: 'Action',
             fixed: "right",
-            render: (item: IPDataType) => {
+            render: (item: IProducts) => {
                 return (
                     <>
                         <div className="d-flex gap-3">
@@ -166,7 +176,7 @@ const ProductPage = () => {
                                 style={{ fontSize: '18px', cursor: "pointer" }}
                                 twoToneColor="#f57800"
                                 onClick={() => {
-                                    navigate(`/products/update-product/${item._id}`);
+                                    navigate(`/products/update/${item._id}`);
                                 }}
                             />
 
@@ -192,7 +202,7 @@ const ProductPage = () => {
         },
     ];
 
-    const onChange: TableProps<IPDataType>['onChange'] = (pagination, filters, sorter: any, extra) => {
+    const onChange: TableProps<IProducts>['onChange'] = (pagination, filters, sorter: any, extra) => {
         if (pagination.current && pagination.current !== current) {
             setCurrent(pagination.current);
         }

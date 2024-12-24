@@ -41,7 +41,7 @@ const InputSearch = (props: IProps) => {
                 <div className="col-3">
                     <Form.Item
                         name={"name"}
-                        label={"Tên"}
+                        label={"Tên người dùng"}
                     >
 
                         <Input placeholder="Tên" />

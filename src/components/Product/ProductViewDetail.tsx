@@ -1,10 +1,10 @@
-import { IPDataType } from "@/pages/Product";
+import { IProducts } from "@/pages/Product";
 import { Badge, Descriptions, Divider, Drawer, Image } from "antd";
 import dayjs from "dayjs";
 
 interface IProps {
     isOpenDetail: boolean,
-    dataViewDetail: IPDataType | undefined,
+    dataViewDetail: IProducts | undefined,
     onClose: any
 }
 
@@ -25,19 +25,12 @@ const ProductViewDetail = (props: IProps) => {
                     bordered
                     column={2}
                 >
-                    <Descriptions.Item label="Thumbnail" span={2}>
-                        <Image
-                            key={dataViewDetail?.thumbnail}
-                            width={100}
-                            src={dataViewDetail?.thumbnail}
-                        />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Slider" span={2}>
-                        {dataViewDetail?.slider.map((item) => (
+                    <Descriptions.Item label="Hình ảnh" span={2}>
+                        {dataViewDetail?.images.map((url) => (
                             <Image
-                                key={item}
+                                key={url}
                                 width={100}
-                                src={item}
+                                src={url}
                             />
                         ))}
                     </Descriptions.Item>
@@ -46,7 +39,9 @@ const ProductViewDetail = (props: IProps) => {
                         {dataViewDetail?.title}
                     </Descriptions.Item>
                     <Descriptions.Item label="Danh mục">{dataViewDetail?.categoryId.title}</Descriptions.Item>
-                    <Descriptions.Item label="Số lượng">{dataViewDetail?.quantity}</Descriptions.Item>
+                    <Descriptions.Item label="Số lượng">{dataViewDetail?.versions.reduce(
+                        (accumulator, currentValue) => accumulator + currentValue.quantity, 0
+                    )}</Descriptions.Item>
                     <Descriptions.Item label="Giá">
                         {dataViewDetail?.price.toLocaleString('it-IT', {
                             style: 'currency', currency: 'VND'

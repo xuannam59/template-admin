@@ -8,12 +8,11 @@ import RegisterPage from "@/pages/auth/register";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import UserPage from "@/pages/User";
 import ProductPage from "@/pages/Product";
-import AddProduct from "@/pages/Product/AddProduct";
-import UpdateProduct from "@/pages/Product/UpdateProduct";
 import CategoryPage from "@/pages/Category";
 import OrderPage from "@/pages/Order";
 import GeneralSettingPage from "@/pages/GeneralSettings";
 import Promotions from "@/pages/Promotions";
+import CreateUpdateProduct from "@/pages/Product/CreateUpdateProduct";
 
 
 const Routers = () => {
@@ -33,9 +32,11 @@ const Routers = () => {
                     <Route path="/" element={<ProtectedRoute><LayoutAdmin /></ProtectedRoute>} >
                         <Route index element={<AdminPage />} />
                         <Route path="/users" element={<UserPage />} />
-                        <Route path="/products" element={<ProductPage />} />
-                        <Route path="/add-product" element={<AddProduct />} />
-                        <Route path="/products/update-product/:id" element={<UpdateProduct />} />
+                        <Route path="products"  >
+                            <Route index element={<ProductPage />} />
+                            <Route path="create" element={<CreateUpdateProduct />} />
+                            <Route path="update/:id" element={<CreateUpdateProduct />} />
+                        </Route>
                         <Route path="/categories" element={<CategoryPage />} />
                         <Route path="/orders" element={<OrderPage />} />
                         <Route path="/general-settings" element={<GeneralSettingPage />} />

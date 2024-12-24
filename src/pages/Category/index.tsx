@@ -4,7 +4,7 @@ import CategoryInputSearch from '@/components/Category/CategoryInputSearch';
 import ToggleCategory from '@/components/Category/ToggleCategory';
 import { tree } from '@/helpers/createTree';
 import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
-import { message, notification, Popconfirm, Table, TableColumnsType, TableProps, Tag, Typography } from 'antd'
+import { message, notification, Popconfirm, Table, TableColumnsType, TableProps, Tag } from 'antd'
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
@@ -18,12 +18,12 @@ export interface ICDataType {
         title: string
     };
     status: string,
+    image: string,
     createdAt: Date;
     updatedAt: Date;
     children: ICDataType[];
 }
 
-const { Title } = Typography
 
 const CategoryPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -53,6 +53,7 @@ const CategoryPage = () => {
                         title: item.title,
                         updatedAt: item.updatedAt,
                         status: item.status,
+                        image: item.image,
                         description: item?.description ?? "",
                         parentId: item?.parentId?._id ?? ""
                     }
@@ -175,7 +176,6 @@ const CategoryPage = () => {
     return (
         <>
             <div className="container  p-4 rounded" style={{ backgroundColor: "white" }}>
-                <Title level={3}>Quản lý danh mục</Title>
                 <div className="row">
                     <div className="col-12 mb-3">
                         <CategoryInputSearch

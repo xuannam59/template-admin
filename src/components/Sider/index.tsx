@@ -2,8 +2,8 @@ import { Menu } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { useEffect, useState } from "react";
 import {
-    TbBrandProducthunt, TbCategory, TbChecklist,
-    TbHome, TbPackages, TbPlaylistAdd,
+    TbCategory,
+    TbHome, TbPackage, TbPackages,
     TbSettings, TbSquareRoundedPercentage,
     TbUsersGroup
 } from "react-icons/tb";
@@ -20,7 +20,6 @@ const SiderComponent = (props: IProp) => {
         if (location && location.pathname) {
             const allRoute = [
                 "", "users", "products",
-                "addProduct", "add-product", "update-product",
                 "categories", "general-settings", "orders",
                 "promotions"];
             const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
@@ -39,36 +38,24 @@ const SiderComponent = (props: IProp) => {
             label: <Link to={'/'}>Dashboard</Link>,
         },
         {
-            key: "manageProducts",
-            icon: <TbBrandProducthunt size={24} />,
-            label: <span>Manage Products</span>,
-            children: [
-                {
-                    key: "products",
-                    icon: <TbChecklist size={24} />,
-                    label: <Link to={'/products'}>Products</Link>,
-                },
-                {
-                    key: "add-product",
-                    icon: <TbPlaylistAdd size={24} />,
-                    label: <Link to={'/add-product'}>Add product</Link>,
-                }
-            ]
+            key: "products",
+            icon: <TbPackage size={24} />,
+            label: <Link to={'/products'}>Products</Link>,
         },
         {
             key: 'categories',
             icon: <TbCategory size={24} />,
-            label: <Link to={'/categories'}>Manage categories</Link>,
+            label: <Link to={'/categories'}>Categories</Link>,
         },
         {
             key: 'users',
             icon: <TbUsersGroup size={24} />,
-            label: <Link to={'/users'}>Manage Users</Link>,
+            label: <Link to={'/users'}>Users</Link>,
         },
         {
             key: 'orders',
             icon: <TbPackages size={24} />,
-            label: <Link to={'/orders'}>Manage order</Link>,
+            label: <Link to={'/orders'}>Order</Link>,
         },
         {
             key: 'general-settings',
