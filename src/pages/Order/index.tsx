@@ -1,4 +1,5 @@
 import OrderInputSearch from "@/components/Order/OrderInputSearch";
+import TableData from "@/components/Table/TableData";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
 import { Popconfirm, Table, TableColumnsType, Typography } from "antd"
 import { useState } from "react";
@@ -31,6 +32,7 @@ const OrderPage = () => {
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [filterQuery, setFilterQuery] = useState("");
+    const [sortQuery, setSortQuery] = useState("");
     const [listOrder, setListOrder] = useState<IODataType[]>([
         {
             _id: "123123123123",
@@ -123,30 +125,18 @@ const OrderPage = () => {
     return (
         <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
             <div className="row">
-                <div className="col-12 mb-3">
-                    <OrderInputSearch
-                        setFilterQuery={setFilterQuery}
-                    />
-                </div>
-                <div className="col-12">
-                    <Table
-                        loading={isLoading}
+                <div className="col">
+                    <TableData
+                        isLoading={isLoading}
                         columns={columns}
                         dataSource={listOrder}
                         onChange={onChange}
-                        rowKey={"_id"}
-                        pagination={{
-                            current: current,
-                            pageSize: pageSize,
-                            total: total,
-                            showSizeChanger: true,
-                            pageSizeOptions: [8, 15, 20, 50],
-                            showTotal: (total, range) => { return <div>{range[0]}-{range[1]} trên {total}rows</div> }
-                        }}
-                        scroll={{
-                            x: 'max-content',
-                            y: 55 * 8
-                        }}
+                        current={current}
+                        pageSize={pageSize}
+                        total={total}
+                        setFilterQuery={setFilterQuery}
+                        setSortQuery={setSortQuery}
+                        hiddenBtnAdd
                     />
                 </div>
             </div>

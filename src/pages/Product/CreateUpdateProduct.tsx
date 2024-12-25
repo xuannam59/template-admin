@@ -137,7 +137,7 @@ const CreateUpdateProduct = () => {
             )
             if (res && res.data) {
                 message.success(`${productDetail ? "Cập nhập" : "Tạo"} sản phẩm thành công!`);
-                productDetail ? navigate(0) : navigate("products")
+                productDetail ? navigate(0) : navigate("/products")
             } else {
                 notification.error({
                     message: "Có lỗi xảy ra",

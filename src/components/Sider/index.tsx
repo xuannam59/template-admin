@@ -1,4 +1,4 @@
-import { Menu } from "antd"
+import { Menu, MenuProps } from "antd"
 import Sider from "antd/es/layout/Sider"
 import { useEffect, useState } from "react";
 import {
@@ -12,6 +12,8 @@ import { Link, useLocation } from "react-router-dom";
 interface IProp {
     collapsed: boolean,
 }
+
+type MenuItem = Required<MenuProps>['items'][number];
 
 const SiderComponent = (props: IProp) => {
     const [activeMenu, setActiveMenu] = useState('');
@@ -31,7 +33,7 @@ const SiderComponent = (props: IProp) => {
         }
     }, [location]);
     const { collapsed } = props;
-    const items = [
+    const items: MenuItem[] = [
         {
             key: 'dashboard',
             icon: <TbHome size={24} />,
@@ -48,6 +50,11 @@ const SiderComponent = (props: IProp) => {
             label: <Link to={'/categories'}>Categories</Link>,
         },
         {
+            key: 'promotions',
+            icon: <TbSquareRoundedPercentage size={24} />,
+            label: <Link to={'/promotions'}>Promotions</Link>,
+        },
+        {
             key: 'users',
             icon: <TbUsersGroup size={24} />,
             label: <Link to={'/users'}>Users</Link>,
@@ -61,11 +68,6 @@ const SiderComponent = (props: IProp) => {
             key: 'general-settings',
             icon: <TbSettings size={24} />,
             label: <Link to={'/general-settings'}>Settings</Link>,
-        },
-        {
-            key: 'promotions',
-            icon: <TbSquareRoundedPercentage size={24} />,
-            label: <Link to={'/promotions'}>Promotions</Link>,
         },
     ]
     return <>

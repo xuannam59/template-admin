@@ -1,13 +1,11 @@
-
 import handleAPI from "@/apis/handleAPI";
 import ModalPromotion from "@/components/Promotions/ModalPromotion";
 import { Avatar, Button, message, Modal, notification, Space } from "antd"
 import { useEffect, useState } from "react";
-import { Table } from 'antd';
 import { ColumnProps, TableProps } from "antd/es/table";
 import dayjs from "dayjs";
 import { TbEdit, TbTrash } from "react-icons/tb";
-import ProductInputSearch from "@/components/Product/ProductInputSearch";
+import TableData from "@/components/Table/TableData";
 
 export interface IPromotions {
     _id: string
@@ -35,7 +33,7 @@ const { confirm } = Modal
 const Promotions = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [promotions, setPromotions] = useState<IPromotions[]>([]);
+    const [dataSource, setDataSource] = useState<IPromotions[]>([]);
     const [selectedPromotion, setSelectedPromotion] = useState<IPromotions>();
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(8);
@@ -45,17 +43,16 @@ const Promotions = () => {
 
     useEffect(() => {
         getPromotions()
-    }, [current, pageSize, total, current, pageSize, sortQuery, filterQuery]);
+    }, [current, pageSize, sortQuery, filterQuery]);
 
     const getPromotions = async () => {
         setIsLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}
-        ${filterQuery ? filterQuery : ""}
-        ${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
+        let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
+        console.log(2)
         try {
             const res = await handleAPI(`/promotions?${query}`);
-            if (res.data) {
-                setPromotions(res.data.result);
+            if (res.data && res) {
+                setDataSource(res.data.result);
                 setTotal(res.data.meta.total);
             }
         } catch (error) {
@@ -192,30 +189,18 @@ const Promotions = () => {
         <>
             <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
                 <div className="row">
-                    <div className="col-12 mb-3">
-                        <ProductInputSearch
+                    <div className="col">
+                        <TableData
+                            current={current}
+                            pageSize={pageSize}
+                            total={total}
+                            setSortQuery={setSortQuery}
                             setFilterQuery={setFilterQuery}
-                        />
-                    </div>
-                    <div className="col-12">
-                        <Table
-                            loading={isLoading}
-                            columns={columns}
-                            dataSource={promotions}
-                            rowKey={"_id"}
+                            openAddNew={() => { setIsVisible(true) }}
                             onChange={onChange}
-                            pagination={{
-                                current: current,
-                                pageSize: pageSize,
-                                total: total,
-                                showSizeChanger: true,
-                                pageSizeOptions: [8, 15, 20, 50],
-                                showTotal: (total, range) => { return <div>{range[0]}-{range[1]} trên {total}rows</div> }
-                            }}
-                            scroll={{
-                                x: 'max-content',
-                                y: 83 * 8
-                            }}
+                            columns={columns}
+                            dataSource={dataSource}
+                            isLoading={isLoading}
                         />
                     </div>
                 </div>
@@ -226,7 +211,7 @@ const Promotions = () => {
                     setIsVisible(false);
                     setSelectedPromotion(undefined);
                 }}
-                loadData={() => getPromotions()}
+                loadData={() => 1}
                 promotion={selectedPromotion}
             />
         </>

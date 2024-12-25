@@ -1,10 +1,9 @@
 import handleAPI from '@/apis/handleAPI';
-import CategoryHeaderTable from '@/components/Category/CategoryHeaderTable';
-import CategoryInputSearch from '@/components/Category/CategoryInputSearch';
 import ToggleCategory from '@/components/Category/ToggleCategory';
+import TableData from '@/components/Table/TableData';
 import { tree } from '@/helpers/createTree';
 import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
-import { message, notification, Popconfirm, Table, TableColumnsType, TableProps, Tag } from 'antd'
+import { message, notification, Popconfirm, TableColumnsType, TableProps, Tag } from 'antd'
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
@@ -43,10 +42,9 @@ const CategoryPage = () => {
     const fetchCategories = async () => {
         setIsLoading(true);
         try {
-            let query = `current=${current}&pageSize=${pageSize}${filterQuery ? filterQuery : ""}`;
+            let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}`
             const res = await handleAPI(`/categories?${query}`);
             if (res.data && res) {
-
                 const data = res.data.result.map((item: any) => {
                     return {
                         id: item._id,
@@ -177,36 +175,18 @@ const CategoryPage = () => {
         <>
             <div className="container  p-4 rounded" style={{ backgroundColor: "white" }}>
                 <div className="row">
-                    <div className="col-12 mb-3">
-                        <CategoryInputSearch
-                            setFilterQuery={setFilterQuery}
-                        />
-                    </div>
-                    <div className="col-12">
-                        <Table
-                            title={() => <CategoryHeaderTable
-                                setFilterQuery={setFilterQuery}
-                                setSortQuery={setSortQuery}
-                                setIsModalOpen={setIsModalOpen}
-                            />}
+                    <div className="col">
+                        <TableData
                             columns={columns}
-                            loading={isLoading}
+                            isLoading={isLoading}
                             dataSource={listCategory}
                             onChange={onChange}
-                            rowKey={"id"}
-                            pagination={{
-                                current: current,
-                                pageSize: pageSize,
-                                total: total,
-                                pageSizeOptions: [8, 15, 20, 50],
-                                showTotal: (total, range) => {
-                                    return <div>{range[0]}-{range[1]} trên {total}rows</div>
-                                }
-                            }}
-                            scroll={{
-                                x: 'max-content',
-                                y: 55 * 8
-                            }}
+                            current={current}
+                            pageSize={pageSize}
+                            total={total}
+                            setFilterQuery={setFilterQuery}
+                            setSortQuery={() => { }}
+                            openAddNew={() => { setIsModalOpen(true) }}
                         />
                     </div>
                 </div>
