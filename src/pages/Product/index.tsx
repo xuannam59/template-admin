@@ -93,24 +93,34 @@ const ProductPage = () => {
         {
             title: 'Ảnh',
             fixed: 'left',
+            width: 80,
             render: (item: IProducts) => {
                 return <Image
                     src={item.images[0]}
-                    width={36}
+                    width={25}
                 />
             }
         },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'title',
+            sorter: true,
             fixed: 'left',
-            minWidth: 150,
+            ellipsis: true,
             render: (text, record) => {
-                return <Link to={''} onClick={() => {
-                    setDataViewDetail(record);
-                    setIsOpenDetail(true)
-                }}
-                >{text}</Link>
+                const maxLength = 26;
+                const displayText = text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
+                return (
+                    <Link
+                        to={''}
+                        onClick={() => {
+                            setDataViewDetail(record);
+                            setIsOpenDetail(true);
+                        }}
+                    >
+                        {displayText}
+                    </Link>
+                );
             }
         },
         {

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 
 export interface ICDataType {
-    id: string;
+    _id: string;
     title: string;
     description: string;
     parentId: {
@@ -47,7 +47,7 @@ const CategoryPage = () => {
             if (res.data && res) {
                 const data = res.data.result.map((item: any) => {
                     return {
-                        id: item._id,
+                        _id: item._id,
                         title: item.title,
                         updatedAt: item.updatedAt,
                         status: item.status,
@@ -71,11 +71,11 @@ const CategoryPage = () => {
 
     const columns: TableColumnsType<ICDataType> = [
         {
-            title: 'ID',
-            dataIndex: 'id',
+            title: 'Mã danh mục',
+            dataIndex: '_id',
             fixed: 'left',
             minWidth: 60,
-            render: (text, record) => {
+            render: (text) => {
                 return <Link to={''}
                 >{text}</Link>
             }
@@ -132,7 +132,7 @@ const CategoryPage = () => {
                                 okText="Yes"
                                 cancelText="No"
                                 onConfirm={() => {
-                                    handelDelete(record.id);
+                                    handelDelete(record._id);
                                 }}
                             >
                                 <DeleteTwoTone

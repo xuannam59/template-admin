@@ -1,5 +1,5 @@
 interface ITree {
-    id: string,
+    _id: string,
     title: string;
     value: string;
     parentId: string;
@@ -11,7 +11,7 @@ const createTree = (arr: ITree[], parentId = "") => {
     arr.forEach(item => {
         if (item.parentId == parentId) {
             const newItem = item;
-            const children = createTree(arr, item.id);
+            const children = createTree(arr, item._id);
             if (children.length > 0) {
                 newItem.children = children;
             }

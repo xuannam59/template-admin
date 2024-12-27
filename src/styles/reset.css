@@ -6,3 +6,12 @@ a {
     min-height: 350px !important;
     overflow: hidden;
 }
+
+.text-2-line {
+    line-height: 1.5em;
+    height: 3em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 100%;
+}

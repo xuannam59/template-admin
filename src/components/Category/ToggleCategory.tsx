@@ -46,7 +46,7 @@ const ToggleCategory = (props: IProps) => {
             if (res && res.data) {
                 const categories = res.data.result.map((item: any) => {
                     return {
-                        id: item._id,
+                        _id: item._id,
                         title: item.title,
                         value: item._id,
                         parentId: item.parentId ? item.parentId._id : ""
@@ -62,7 +62,7 @@ const ToggleCategory = (props: IProps) => {
 
     const onFinish = async (values: any) => {
         setIsLoading(true)
-        const api = `/categories/${selectData ? selectData.id : ""}`;
+        const api = `/categories/${selectData ? selectData._id : ""}`;
         try {
             const data = {
                 title: values.title,

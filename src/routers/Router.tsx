@@ -13,6 +13,7 @@ import OrderPage from "@/pages/Order";
 import GeneralSettingPage from "@/pages/GeneralSettings";
 import Promotions from "@/pages/Promotions";
 import CreateUpdateProduct from "@/pages/Product/CreateUpdateProduct";
+import FakeProducts from "@/pages/Product/FakeProducts";
 
 
 const Routers = () => {
@@ -36,6 +37,7 @@ const Routers = () => {
                             <Route index element={<ProductPage />} />
                             <Route path="create" element={<CreateUpdateProduct />} />
                             <Route path="update/:id" element={<CreateUpdateProduct />} />
+                            <Route path="fake" element={<FakeProducts />} />
                         </Route>
                         <Route path="/categories" element={<CategoryPage />} />
                         <Route path="/orders" element={<OrderPage />} />

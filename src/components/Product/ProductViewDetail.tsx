@@ -34,18 +34,18 @@ const ProductViewDetail = (props: IProps) => {
                             />
                         ))}
                     </Descriptions.Item>
-                    <Descriptions.Item label="ID" span={2}>{dataViewDetail?._id}</Descriptions.Item>
+                    <Descriptions.Item label="Mã sản phẩm" span={2}>{dataViewDetail?._id}</Descriptions.Item>
                     <Descriptions.Item label="Tên sản phẩm" span={2}>
                         {dataViewDetail?.title}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Danh mục" span={2}> {dataViewDetail?.versions.map((item) => (
+                    <Descriptions.Item label="Danh mục" span={2}>{dataViewDetail?.categoryId.title}</Descriptions.Item>
+                    <Descriptions.Item label="Màu sắc"> {dataViewDetail?.versions.map((item) => (
                         <Tag
                             key={item.color}
                             color={item.color}
                             style={{ width: "20px", height: "20px", borderRadius: 100 }}
                         />
                     ))}</Descriptions.Item>
-                    <Descriptions.Item label="Màu sắc">{dataViewDetail?.categoryId.title}</Descriptions.Item>
                     <Descriptions.Item label="Số lượng">{dataViewDetail?.versions.reduce(
                         (accumulator, currentValue) => accumulator + currentValue.quantity, 0
                     )}</Descriptions.Item>

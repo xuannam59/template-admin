@@ -1,5 +1,9 @@
-import { Table, TableColumnsType } from 'antd'
+import { Table, TableColumnsType, TableProps } from 'antd'
 import TableTitle from './TableTitle';
+import { useState } from 'react';
+
+type TableRowSelection<T extends object = object> = TableProps<T>['rowSelection'];
+
 
 interface IProps {
     columns: TableColumnsType<any>;
@@ -24,6 +28,16 @@ const TableData = (props: IProps) => {
         onChange, setFilterQuery, setSortQuery,
         dataExport, openAddNew, scrollY, hiddenBtnAdd }
         = props
+    const [selectedIds, setSelectedIds] = useState<React.Key[]>([]);
+
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        setSelectedIds(newSelectedRowKeys);
+    };
+
+    const rowSelection: TableRowSelection<any> = {
+        selectedRowKeys: selectedIds,
+        onChange: onSelectChange,
+    };
 
     return (
         <Table
@@ -33,11 +47,14 @@ const TableData = (props: IProps) => {
                 dataExport={dataExport}
                 openAddNew={openAddNew}
                 hiddenBtnAdd={hiddenBtnAdd}
+                selectedIds={selectedIds}
+                setSelectedIds={setSelectedIds}
             />}
             loading={isLoading}
             columns={columns}
             dataSource={dataSource}
             onChange={onChange}
+            rowSelection={rowSelection}
             rowKey={"_id"}
             pagination={{
                 current: current,

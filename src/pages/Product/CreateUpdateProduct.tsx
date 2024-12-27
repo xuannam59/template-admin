@@ -38,7 +38,7 @@ const CreateUpdateProduct = () => {
             if (res && res.data) {
                 const categories = res.data.result.map((item: any) => {
                     return {
-                        id: item._id,
+                        _id: item._id,
                         title: item.title,
                         value: item._id,
                         parentId: item.parentId ? item.parentId._id : ""
@@ -97,11 +97,11 @@ const CreateUpdateProduct = () => {
     const onFinish = async (values: any) => {
         setLoading(true);
         const { categoryId, discountPercentage,
-            price, status, quantity, title, versions } = values
+            price, status, title, versions } = values
 
         const data: any = {
             categoryId, discountPercentage,
-            price, status, quantity,
+            price, status,
             title, versions,
             description: description,
         }

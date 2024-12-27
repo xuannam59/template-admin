@@ -1,8 +1,9 @@
+import handleAPI from "@/apis/handleAPI";
 import { downloadExcel } from "@/helpers/exportExcel";
 import { replaceName } from "@/helpers/replaceName";
 import { ExportOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
-import { Button, Input, notification, Typography } from "antd";
-import React from "react";
+import { Button, Input, message, notification, Typography } from "antd";
+import React, { useState } from "react";
 import { TbSearch } from "react-icons/tb";
 
 
@@ -11,16 +12,19 @@ interface IProps {
     setSortQuery: (value: string) => void;
     dataExport?: any[]
     openAddNew?: () => void;
-    hiddenBtnAdd?: boolean
+    hiddenBtnAdd?: boolean;
+    selectedIds: React.Key[];
+    setSelectedIds: any;
 }
 
-const { Title } = Typography
+const { Text } = Typography
 
 const TableTitle = (props: IProps) => {
     let timeoutId: ReturnType<typeof setTimeout>;
-
     const { setFilterQuery, setSortQuery, dataExport,
-        openAddNew, hiddenBtnAdd } = props
+        openAddNew, hiddenBtnAdd, selectedIds, setSelectedIds } = props
+
+    const [isLoading, setIsLoading] = useState(false);
     const exportData = () => {
         if (dataExport && dataExport.length > 0) {
             downloadExcel(dataExport, "DataProduct");
@@ -48,10 +52,45 @@ const TableTitle = (props: IProps) => {
 
     }
 
+    const DeleteSelectedItems = async () => {
+        setIsLoading(true);
+        try {
+            const res = await handleAPI("products/delete-multiple", selectedIds, "delete");
+            if (res.data) {
+                message.success(`Successfully deleted ${selectedIds.length} items`);
+                setSortQuery("-createdAt");
+                setSelectedIds([]);
+            } else {
+                notification.error({
+                    message: "Deletion error",
+                    description: res.message && Array.isArray(res.message) ?
+                        res.message.toString() :
+                        res.message
+                })
+            }
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <>
             <div className="row">
-                <Title level={5} className="col-2">Bảng dữ liệu</Title>
+                <div className="col-3">
+                    {selectedIds.length > 0 &&
+                        <>
+                            <Button
+                                loading={isLoading}
+                                onClick={DeleteSelectedItems}
+                                type="primary"
+                                danger>Delete</Button>
+                            <Text type="secondary" className="ms-2">{selectedIds.length} items selected</Text>
+                        </>
+                    }
+                </div>
+                {/* <Title level={5} className="col-2">Bảng dữ liệu</Title> */}
                 <div className="col-6">
                     <Input
                         placeholder="Tìm kiếm ..."
@@ -60,7 +99,7 @@ const TableTitle = (props: IProps) => {
                         maxLength={128}
                     />
                 </div>
-                <div className="col-4">
+                <div className="col-3">
                     <div className="d-flex justify-content-end">
                         <Button
                             disabled={dataExport ? false : true}
