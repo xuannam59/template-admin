@@ -127,11 +127,13 @@ const OrderPage = () => {
             <div className="row">
                 <div className="col">
                     <TableData
+                        api="orders"
                         isLoading={isLoading}
                         columns={columns}
                         dataSource={listOrder}
                         onChange={onChange}
                         current={current}
+                        setCurrent={setCurrent}
                         pageSize={pageSize}
                         total={total}
                         setFilterQuery={setFilterQuery}

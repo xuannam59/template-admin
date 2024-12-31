@@ -191,10 +191,12 @@ const Promotions = () => {
                 <div className="row">
                     <div className="col">
                         <TableData
+                            api="promotions"
                             current={current}
                             pageSize={pageSize}
                             total={total}
                             setSortQuery={setSortQuery}
+                            setCurrent={setCurrent}
                             setFilterQuery={setFilterQuery}
                             openAddNew={() => { setIsVisible(true) }}
                             onChange={onChange}
@@ -211,7 +213,9 @@ const Promotions = () => {
                     setIsVisible(false);
                     setSelectedPromotion(undefined);
                 }}
-                loadData={() => 1}
+                loadData={() => {
+                    getPromotions()
+                }}
                 promotion={selectedPromotion}
             />
         </>

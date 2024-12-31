@@ -14,24 +14,28 @@ export interface IProducts {
     price: number;
     discountPercentage: number;
     categoryId: {
-        _id: string,
-        title: string
+        _id: string;
+        title: string;
     },
     versions: {
-        color: string,
-        quantity: number
+        color: string;
+        quantity: number;
     }[];
-    status: string,
+    status: string;
     createdAt: Date;
     updatedAt: Date;
     slug: string;
     createdBy?: {
-        _id: string,
-        email: string
+        _id: string;
+        email: string;
     };
+    chip: string;
+    ram: string;
+    ssd: string;
+    gpu: string;
     updatedBy?: {
-        _id: string,
-        email: string
+        _id: string;
+        email: string;
     };
 }
 
@@ -93,11 +97,12 @@ const ProductPage = () => {
         {
             title: 'Ảnh',
             fixed: 'left',
-            width: 80,
+            align: "center",
+            width: 60,
             render: (item: IProducts) => {
                 return <Image
                     src={item.images[0]}
-                    width={25}
+                    width={50}
                 />
             }
         },
@@ -129,6 +134,15 @@ const ProductPage = () => {
             render: (item: IProducts) => {
                 return (
                     <>{item.categoryId.title}</>
+                )
+            },
+        },
+        {
+            title: 'Thông số kỹ thuật',
+            minWidth: 160,
+            render: (item: IProducts) => {
+                return (
+                    <>{item.chip} {item.ram}GB RAM {item.ssd}GB SSD {item.gpu ? `${item.gpu} GPU` : ""}</>
                 )
             },
         },
@@ -175,15 +189,31 @@ const ProductPage = () => {
             }
         },
         {
+            title: 'Số lượng đã bán',
+            dataIndex: "sales",
+            minWidth: 150,
+            align: "center",
+            render: (sales: number) => {
+                return <>
+                    {
+                        <Tag color='green'>{sales}</Tag>
+                    }
+                </>
+            }
+        },
+        {
             title: 'Số lượng',
             minWidth: 100,
+            align: "center",
             render: (item: IProducts) => {
                 const quantity = item.versions.reduce(
                     (accumulator, currentValue) => accumulator + currentValue.quantity, 0
                 )
                 return <>
                     {
-                        quantity
+                        <Tag color='cyan'>
+                            {quantity}
+                        </Tag>
                     }
                 </>
             }
@@ -292,6 +322,7 @@ const ProductPage = () => {
             <div className="row">
                 <div className="col">
                     <TableData
+                        api='products'
                         columns={columns}
                         openAddNew={() => { navigate("/products/create") }}
                         current={current}
@@ -302,6 +333,7 @@ const ProductPage = () => {
                         onChange={onChange}
                         setFilterQuery={setFilterQuery}
                         setSortQuery={setSortQuery}
+                        setCurrent={setCurrent}
                         dataExport={dataExport}
                     />
                 </div>

@@ -6,7 +6,7 @@ interface ITree {
     children?: any
 }
 
-const createTree = (arr: ITree[], parentId = "") => {
+const createTree = (arr: ITree[], parentId: string = "") => {
     const tree: ITree[] = [];
     arr.forEach(item => {
         if (item.parentId == parentId) {
@@ -21,6 +21,6 @@ const createTree = (arr: ITree[], parentId = "") => {
     return tree;
 }
 
-export const tree = (array: ITree[], parentId = "") => {
+export const tree = (array: ITree[], parentId: string = "") => {
     return createTree(array, parentId);
 }

@@ -3,12 +3,12 @@ import ToggleCategory from '@/components/Category/ToggleCategory';
 import TableData from '@/components/Table/TableData';
 import { tree } from '@/helpers/createTree';
 import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
-import { message, notification, Popconfirm, TableColumnsType, TableProps, Tag } from 'antd'
+import { Image, message, notification, Popconfirm, TableColumnsType, Tag } from 'antd'
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 
-export interface ICDataType {
+export interface ICategories {
     _id: string;
     title: string;
     description: string;
@@ -16,33 +16,34 @@ export interface ICDataType {
         _id: string,
         title: string
     };
-    status: string,
-    image: string,
+    status: string;
+    displayMode: boolean;
+    image: string;
     createdAt: Date;
+    createdBy: {
+        _id: string,
+        email: string
+    };
     updatedAt: Date;
-    children: ICDataType[];
+    children: ICategories[];
 }
 
 
 const CategoryPage = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [listCategory, setListCategory] = useState<ICDataType[]>([]);
-    const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(1000);
-    const [total, setTotal] = useState(0);
-    const [sortQuery, setSortQuery] = useState("");
+    const [listCategory, setListCategory] = useState<ICategories[]>([]);
     const [filterQuery, setFilterQuery] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectData, setSelectData] = useState<ICDataType | undefined>(undefined);
+    const [selectData, setSelectData] = useState<ICategories | undefined>(undefined);
     useEffect(() => {
         fetchCategories();
-    }, [current, pageSize, sortQuery, filterQuery]);
+    }, [filterQuery]);
 
 
     const fetchCategories = async () => {
         setIsLoading(true);
         try {
-            let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}`
+            let query = `${filterQuery ? `&slug=/${filterQuery}/i` : ""}`
             const res = await handleAPI(`/categories?${query}`);
             if (res.data && res) {
                 const data = res.data.result.map((item: any) => {
@@ -52,12 +53,14 @@ const CategoryPage = () => {
                         updatedAt: item.updatedAt,
                         status: item.status,
                         image: item.image,
+                        displayMode: item.displayMode,
                         description: item?.description ?? "",
-                        parentId: item?.parentId?._id ?? ""
+                        parentId: item?.parentId?._id ?? "",
                     }
                 })
-                const result: any = tree(data, data[0]?.parentId ?? "");
-                setListCategory(result)
+                const result: any = tree(data);
+                setListCategory(result);
+                console.log(result);
                 // setListCategory(res.data.result);
                 // setTotal(res.data.meta.totalItems);
             }
@@ -69,35 +72,53 @@ const CategoryPage = () => {
 
     }
 
-    const columns: TableColumnsType<ICDataType> = [
+    const columns: TableColumnsType<ICategories> = [
         {
-            title: 'Mã danh mục',
-            dataIndex: '_id',
-            fixed: 'left',
-            minWidth: 60,
-            render: (text) => {
+            title: 'Tên danh mục',
+            dataIndex: 'title',
+            minWidth: 150,
+            render: (text: string) => {
                 return <Link to={''}
                 >{text}</Link>
             }
         },
         {
-            title: 'Tên danh mục',
-            dataIndex: 'title',
-            width: 200,
-
+            title: 'Ảnh',
+            dataIndex: "image",
+            align: "center",
+            width: 60,
+            render: (image: string) => {
+                return <Image
+                    src={image}
+                    width={20}
+                />
+            }
         },
         {
             title: 'Mô tả',
             dataIndex: 'description',
-            width: 300
+            minWidth: 150
+        },
+        {
+            title: 'Chế độ hiển thị',
+            dataIndex: "displayMode",
+            width: 100,
+            render: (displayMode: boolean) => {
+                return <>
+                    <Tag color={displayMode ? "#87d068" : "#2db7f5"}>
+                        {displayMode ? "Hiển thị" : "Không hiển thị"}
+                    </Tag>
+                </>
+            }
         },
         {
             title: 'Trạng thái',
+            dataIndex: "status",
             width: 100,
-            render: (text, record) => {
+            render: (status: string) => {
                 return <>
-                    <Tag color={record.status === "active" ? "green" : "red"}>
-                        {record.status.toUpperCase()}
+                    <Tag color={status === "active" ? "green" : "red"}>
+                        {status.toUpperCase()}
                     </Tag>
                 </>
             }
@@ -105,6 +126,7 @@ const CategoryPage = () => {
         {
             title: 'Ngày cập nhập',
             dataIndex: 'updatedAt',
+            width: 200,
             render: (text) => {
                 return dayjs(text).format("DD/MM/YYYY")
             }
@@ -112,7 +134,7 @@ const CategoryPage = () => {
         {
             title: 'Action',
             fixed: "right",
-            render: (text, record) => {
+            render: (item: ICategories) => {
                 return (
                     <>
                         <div className="d-flex gap-3">
@@ -120,7 +142,7 @@ const CategoryPage = () => {
                                 style={{ fontSize: '18px', cursor: "pointer" }}
                                 twoToneColor="#f57800"
                                 onClick={() => {
-                                    setSelectData(record);
+                                    setSelectData(item);
                                     setIsModalOpen(true)
                                 }}
                             />
@@ -132,7 +154,7 @@ const CategoryPage = () => {
                                 okText="Yes"
                                 cancelText="No"
                                 onConfirm={() => {
-                                    handelDelete(record._id);
+                                    handelDelete(item._id);
                                 }}
                             >
                                 <DeleteTwoTone
@@ -162,31 +184,21 @@ const CategoryPage = () => {
         setIsLoading(false)
     }
 
-    const onChange: TableProps<ICDataType>['onChange'] = (pagination, filters, sorter: any, extra) => {
-        if (pagination.current && pagination.current !== current) {
-            setCurrent(pagination.current);
-        }
-        if (pagination.pageSize && pagination.pageSize !== pageSize) {
-            setPageSize(pagination.pageSize);
-            setCurrent(1);
-        }
-    }
     return (
         <>
             <div className="container  p-4 rounded" style={{ backgroundColor: "white" }}>
                 <div className="row">
                     <div className="col">
                         <TableData
+                            api='categories'
                             columns={columns}
                             isLoading={isLoading}
                             dataSource={listCategory}
-                            onChange={onChange}
-                            current={current}
-                            pageSize={pageSize}
-                            total={total}
+                            setCurrent={() => 1}
                             setFilterQuery={setFilterQuery}
                             setSortQuery={() => { }}
                             openAddNew={() => { setIsModalOpen(true) }}
+                            checkStrictly
                         />
                     </div>
                 </div>

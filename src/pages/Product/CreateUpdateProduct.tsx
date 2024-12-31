@@ -32,7 +32,7 @@ const CreateUpdateProduct = () => {
     }, [id]);
 
     const getData = async () => {
-        const api = `/categories?current=1&pageSize=1000`
+        const api = `/categories`
         try {
             const res = await handleAPI(api)
             if (res && res.data) {
@@ -64,6 +64,10 @@ const CreateUpdateProduct = () => {
                     status: data.status,
                     versions: data.versions,
                     categoryId: data.categoryId,
+                    ram: data.ram,
+                    chip: data.chip,
+                    ssd: data.ssd,
+                    gpu: data.gpu
                 }
                 form.setFieldsValue(valueForm);
                 if (data.images.length > 0) {
@@ -97,13 +101,13 @@ const CreateUpdateProduct = () => {
     const onFinish = async (values: any) => {
         setLoading(true);
         const { categoryId, discountPercentage,
-            price, status, title, versions } = values
+            price, status, title, versions, ram, chip, ssd, gpu } = values
 
         const data: any = {
             categoryId, discountPercentage,
             price, status,
-            title, versions,
-            description: description,
+            title, versions, ram, chip, ssd,
+            description: description, gpu
         }
 
         try {
@@ -209,6 +213,40 @@ const CreateUpdateProduct = () => {
                             >
                                 <Input placeholder='Tiêu đề' />
                             </Form.Item>
+                            <div className="row">
+                                <div className="col">
+                                    <Form.Item
+                                        label="Chip"
+                                        name="chip"
+                                    >
+                                        <Input placeholder='Chip' />
+                                    </Form.Item>
+                                </div>
+                                <div className="col">
+                                    <Form.Item
+                                        label="RAM"
+                                        name="ram"
+                                    >
+                                        <Input placeholder='RAM' />
+                                    </Form.Item>
+                                </div>
+                                <div className="col">
+                                    <Form.Item
+                                        label="SSD"
+                                        name="ssd"
+                                    >
+                                        <Input placeholder='SSD' />
+                                    </Form.Item>
+                                </div>
+                                <div className="col">
+                                    <Form.Item
+                                        label="GPU"
+                                        name="gpu"
+                                    >
+                                        <Input placeholder='GPU' />
+                                    </Form.Item>
+                                </div>
+                            </div>
 
                             <div className="row">
                                 <div className="col">
@@ -284,10 +322,9 @@ const CreateUpdateProduct = () => {
                                     </Button>
                                 </Space>
                             </Card>
-                            <Card className='mt-3'>
+                            <Card className='mt-3' title={"Danh mục sản phẩm"}>
                                 <Form.Item
                                     name="categoryId"
-                                    label="Danh mục sản phẩm"
                                     className='mb-0'
                                     rules={[
                                         {
@@ -298,15 +335,13 @@ const CreateUpdateProduct = () => {
                                 >
                                     <TreeSelect
                                         placeholder="Lữa chọn danh mục"
-                                        treeDefaultExpandAll
                                         treeData={listCategory}
                                     />
                                 </Form.Item>
                             </Card>
 
-                            <Card className='mt-3'>
+                            <Card className='mt-3' title={"Trạng thái"}>
                                 <Form.Item
-                                    label="Trạng thái"
                                     name="status"
                                     className='mb-0'
                                     rules={[
@@ -322,7 +357,7 @@ const CreateUpdateProduct = () => {
                                     </Radio.Group>
                                 </Form.Item>
                             </Card>
-                            <Card className='mt-3'>
+                            <Card className='mt-3' title="Phiên bản">
                                 <Form.List name="versions" initialValue={[{ color: "", quantity: 0 }]}>
                                     {(fields, { add, remove }) => (
                                         <>

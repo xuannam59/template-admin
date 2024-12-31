@@ -57,6 +57,7 @@ instance.interceptors.response.use(function (response) {
             return instance.request(error.config);
         }
     }
+    console.log(error.config.url, error.response)
 
     if (
         error.config && error.response

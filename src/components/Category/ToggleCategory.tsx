@@ -1,13 +1,13 @@
 import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
 import { tree } from '@/helpers/createTree';
-import { ICDataType } from '@/pages/Category';
-import { Form, Input, message, Modal, notification, Radio, Select, TreeSelect, Upload, UploadProps } from 'antd';
+import { ICategories } from '@/pages/Category';
+import { Form, Input, message, Modal, notification, Radio, TreeSelect, Upload, UploadProps } from 'antd';
 import { useEffect, useState } from 'react'
 
 interface IProps {
     isModalOpen: boolean
     onClose: any;
-    selectData: ICDataType | undefined;
+    selectData: ICategories | undefined;
     fetchCategories: any,
 }
 
@@ -27,8 +27,10 @@ const ToggleCategory = (props: IProps) => {
                 title: selectData.title,
                 parentId: selectData.parentId ? selectData.parentId : undefined,
                 description: selectData.description,
-                status: selectData.status
+                status: selectData.status,
+                displayMode: selectData.displayMode
             }
+            console.log(selectData);
             if (selectData.image) {
                 setImageUpload([{
                     uuid: "-1",
@@ -40,7 +42,7 @@ const ToggleCategory = (props: IProps) => {
         }
     }, [selectData]);
     const getData = async () => {
-        const api = `/categories?current=1&pageSize=1000`
+        const api = `/categories`
         try {
             const res = await handleAPI(api)
             if (res && res.data) {
@@ -69,6 +71,7 @@ const ToggleCategory = (props: IProps) => {
                 parentId: values.parentId,
                 description: values.description,
                 status: values.status,
+                displayMode: values.displayMode,
                 image: ""
             }
 
@@ -166,7 +169,6 @@ const ToggleCategory = (props: IProps) => {
                     >
                         <TreeSelect
                             placeholder="Lữa chọn danh mục cha"
-                            treeDefaultExpandAll
                             treeData={listCategory}
                         />
                     </Form.Item>
@@ -176,11 +178,10 @@ const ToggleCategory = (props: IProps) => {
                     >
                         <Input.TextArea rows={3} />
                     </Form.Item>
-
                     <Form.Item
                         label="Trạng thái"
                         name="status"
-                        className='mb-0'
+                        className='mb-2'
                         initialValue={"active"}
                         rules={[
                             {
@@ -192,6 +193,23 @@ const ToggleCategory = (props: IProps) => {
                         <Radio.Group>
                             <Radio value={"active"}>Hoạt động</Radio>
                             <Radio value={"inactive"}>Dừng hoạt động</Radio>
+                        </Radio.Group>
+                    </Form.Item>
+                    <Form.Item
+                        label="Chế độ hiển thị"
+                        name="displayMode"
+                        className='mb-0'
+                        initialValue={false}
+                        rules={[
+                            {
+                                required: true,
+                                message: "Vui lòng không để trống"
+                            }
+                        ]}
+                    >
+                        <Radio.Group>
+                            <Radio value={true}>Hiển thị</Radio>
+                            <Radio value={false}>Không hiển thị</Radio>
                         </Radio.Group>
                     </Form.Item>
                 </Form>

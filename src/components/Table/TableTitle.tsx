@@ -10,11 +10,13 @@ import { TbSearch } from "react-icons/tb";
 interface IProps {
     setFilterQuery: (value: string) => void;
     setSortQuery: (value: string) => void;
+    setCurrent: (value: number) => void;
     dataExport?: any[]
     openAddNew?: () => void;
     hiddenBtnAdd?: boolean;
     selectedIds: React.Key[];
     setSelectedIds: any;
+    api: string
 }
 
 const { Text } = Typography
@@ -22,7 +24,8 @@ const { Text } = Typography
 const TableTitle = (props: IProps) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     const { setFilterQuery, setSortQuery, dataExport,
-        openAddNew, hiddenBtnAdd, selectedIds, setSelectedIds } = props
+        openAddNew, hiddenBtnAdd, selectedIds,
+        setSelectedIds, setCurrent, api } = props
 
     const [isLoading, setIsLoading] = useState(false);
     const exportData = () => {
@@ -44,6 +47,7 @@ const TableTitle = (props: IProps) => {
             timeoutId = setTimeout(() => {
                 const title = replaceName(value);
                 setFilterQuery(title);
+                setCurrent(1);
             }, 1000);
         } else {
             clearTimeout(timeoutId)
@@ -52,10 +56,11 @@ const TableTitle = (props: IProps) => {
 
     }
 
+    // đang bị lỗi nếu dùng cho các bảng khác không phải bảng products
     const DeleteSelectedItems = async () => {
         setIsLoading(true);
         try {
-            const res = await handleAPI("products/delete-multiple", selectedIds, "delete");
+            const res = await handleAPI(`${api}/delete-multiple`, selectedIds, "delete");
             if (res.data) {
                 message.success(`Successfully deleted ${selectedIds.length} items`);
                 setSortQuery("-createdAt");
