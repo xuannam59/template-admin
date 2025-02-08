@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, ColorPicker, Form, Input, InputNumber, message, notification, Radio, Space, TreeSelect, Typography, Upload, UploadProps } from 'antd'
+import { Button, Card, ColorPicker, Form, Input, InputNumber, message, notification, Radio, Space, TreeSelect, Typography, Upload } from 'antd'
 import { useEffect, useState, } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
@@ -7,6 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { tree } from '@/helpers/createTree';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import type { UploadFile, UploadChangeParam } from 'antd/es/upload/interface';
 
 
 const { Title } = Typography;
@@ -14,6 +15,7 @@ const { Title } = Typography;
 const CreateUpdateProduct = () => {
     const [form] = Form.useForm();
     const [fileList, setFileList] = useState<any[]>([]);
+    const [thumbnail, setThumbnail] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [listCategory, setListCategory] = useState<any[]>();
     const [description, setDescription] = useState("");
@@ -63,7 +65,7 @@ const CreateUpdateProduct = () => {
                     discountPercentage: data.discountPercentage,
                     status: data.status,
                     versions: data.versions,
-                    categoryId: data.categoryId,
+                    categoryId: data.categoryId._id,
                     ram: data.ram,
                     chip: data.chip,
                     ssd: data.ssd,
@@ -80,6 +82,17 @@ const CreateUpdateProduct = () => {
                         }
                     });
                     setFileList(images)
+                }
+                if (data.thumbnail) {
+                    const thumbnailFile = [
+                        {
+                            uid: uuidv4(),
+                            name: data.thumbnail,
+                            status: 'done',
+                            url: data.thumbnail,
+                        }
+                    ]
+                    setThumbnail(thumbnailFile);
                 }
                 setProductDetail(res.data);
                 setDescription(data.description ?? "");
@@ -111,6 +124,26 @@ const CreateUpdateProduct = () => {
         }
 
         try {
+            const thumbnailFile = thumbnail[0]
+
+            if (thumbnailFile && thumbnailFile.originFileObj) {
+                const url = await handleUploadFileAPI(thumbnailFile.originFileObj);
+                if (url.data) {
+                    data.thumbnail = url;
+                } else {
+                    notification.error({
+                        message: thumbnailFile.name,
+                        description: url.message && Array.isArray(url.message) ?
+                            url.message.toString() :
+                            url.message,
+                        duration: 3
+                    })
+                }
+            } else if (thumbnailFile) {
+                data.thumbnail = thumbnailFile.url;
+            }
+
+
             if (fileList.length > 0) {
                 const urls: string[] = [];
                 for (const file of fileList) {
@@ -133,6 +166,7 @@ const CreateUpdateProduct = () => {
                 }
                 data.images = urls;
             }
+            console.log(data);
 
             const res = await handleAPI(
                 `/products/${productDetail ? productDetail._id : ""}`,
@@ -155,21 +189,19 @@ const CreateUpdateProduct = () => {
         }
     }
 
-    const handleChange: UploadProps['onChange'] = ({ fileList: newFileList }) => {
-        const items = newFileList.map((item) =>
-            item.originFileObj
-                ? {
-                    ...item,
-                    url: item.originFileObj
-                        ? URL.createObjectURL(item.originFileObj)
-                        : '',
-                    status: 'done',
-                }
-                : { ...item }
-        );
-
-        setFileList(items);
-    }
+    const handleChange = (setState: React.Dispatch<React.SetStateAction<UploadFile[]>>) =>
+        ({ fileList: newFileList }: UploadChangeParam<UploadFile>) => {
+            const items = newFileList.map((item) =>
+                item.originFileObj
+                    ? {
+                        ...item,
+                        url: URL.createObjectURL(item.originFileObj),
+                        status: 'done' as const,
+                    }
+                    : { ...item }
+            );
+            setState(items);
+        };
 
 
     return (
@@ -185,6 +217,22 @@ const CreateUpdateProduct = () => {
                     <div className="row">
                         <div className="col-8">
                             <div className="row">
+                                <div className="col-4">
+                                    <Form.Item
+                                        label="Thumbnail"
+                                    >
+                                        <Upload
+                                            fileList={thumbnail}
+                                            accept='image/*'
+                                            listType='picture-card'
+                                            onChange={handleChange(setThumbnail)}
+                                        >
+                                            {thumbnail.length < 1 &&
+                                                "Upload"
+                                            }
+                                        </Upload>
+                                    </Form.Item>
+                                </div>
                                 <div className="col">
                                     <Form.Item
                                         label="Hình ảnh"
@@ -194,7 +242,7 @@ const CreateUpdateProduct = () => {
                                             fileList={fileList}
                                             accept='image/*'
                                             listType='picture-card'
-                                            onChange={handleChange}>
+                                            onChange={handleChange(setFileList)}>
                                             Upload
                                         </Upload>
                                     </Form.Item>

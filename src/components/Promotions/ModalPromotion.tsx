@@ -45,7 +45,9 @@ const ModalPromotion = (props: IProps) => {
 
 
     const onFinish = async (values: any) => {
-        const { title, descriptions, code, value, quantityAvailable, type, startAt, endAt } = values;
+        const { title, descriptions, code,
+            value, quantityAvailable, type,
+            startAt, endAt, maxValue, minValue } = values;
         setIsLoading(true);
         if (imageUpload.length === 0) {
             message.error('Please upload one image');
@@ -58,11 +60,12 @@ const ModalPromotion = (props: IProps) => {
                 })
             } else {
                 const data = {
-                    title, code, value, quantityAvailable, type,
+                    title, code, value,
+                    quantityAvailable, type, maxValue, minValue,
                     descriptions: descriptions ?? "",
                     startAt: new Date(startAt),
                     endAt: new Date(endAt),
-                    image: ""
+                    image: "",
                 }
                 data.image =
                     imageUpload.length > 0 && imageUpload[0].originFileObj
@@ -183,6 +186,36 @@ const ModalPromotion = (props: IProps) => {
                             <InputNumber style={{ width: '100%' }} min={1} />
                         </Form.Item>
 
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        <Form.Item
+                            label="Maximum discount"
+                            name={"maxValue"}
+                        >
+                            <InputNumber
+                                style={{ width: '100%' }}
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div className="col">
+                        <Form.Item
+                            label="Minimum value"
+                            name={"minValue"}
+                            rules={[{
+                                required: true,
+                                message: "Please input your"
+                            }]}
+                        >
+                            <InputNumber
+                                style={{ width: '100%' }}
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            />
+                        </Form.Item>
                     </div>
                 </div>
                 <div className="row">

@@ -1,11 +1,12 @@
 import handleAPI from "@/apis/handleAPI";
 import ModalPromotion from "@/components/Promotions/ModalPromotion";
-import { Avatar, Button, message, Modal, notification, Space } from "antd"
+import { Avatar, Button, message, Modal, notification, Space, Tag, Typography } from "antd"
 import { useEffect, useState } from "react";
 import { ColumnProps, TableProps } from "antd/es/table";
 import dayjs from "dayjs";
 import { TbEdit, TbTrash } from "react-icons/tb";
 import TableData from "@/components/Table/TableData";
+import { VND } from "@/helpers/handleCurrency";
 
 export interface IPromotions {
     _id: string
@@ -16,6 +17,8 @@ export interface IPromotions {
     descriptions: string;
     type: string
     startAt: string
+    maxValue: number
+    minValue: number
     endAt: string
     image: string
     createdBy: {
@@ -29,6 +32,8 @@ export interface IPromotions {
 }
 
 const { confirm } = Modal
+
+const { Text } = Typography
 
 const Promotions = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -48,7 +53,6 @@ const Promotions = () => {
     const getPromotions = async () => {
         setIsLoading(true);
         let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
-        console.log(2)
         try {
             const res = await handleAPI(`/promotions?${query}`);
             if (res.data && res) {
@@ -98,7 +102,7 @@ const Promotions = () => {
     const columns: ColumnProps<IPromotions>[] = [
         {
             title: 'STT',
-            render: (_, record, index) => {
+            render: (_, _1, index) => {
                 return (index + 1) + (current - 1) * pageSize
             },
             fixed: 'left',
@@ -119,20 +123,43 @@ const Promotions = () => {
         {
             title: 'Code',
             dataIndex: 'code',
+            render: (code: string) => {
+                return <>
+                    <Tag>{code}</Tag>
+                </>
+            }
         },
         {
             title: 'Value',
-            dataIndex: 'value',
-            width: 100
+            width: 100,
+            render: (item: IPromotions) => {
+                const suffix = item.type === "percent" ? `${item.value}%` : VND.format(item.value);
+                return <>
+                    <Tag>{suffix}</Tag>
+                </>
+            }
         },
         {
             title: 'Quantity available',
             dataIndex: 'quantityAvailable',
-            width: 170
+            width: 170,
+            align: "center"
         },
         {
-            title: 'Type',
-            dataIndex: 'type',
+            title: "Maximum discount",
+            dataIndex: "maxValue",
+            render: (maxValue: number) => {
+                return VND.format(maxValue)
+            },
+            minWidth: 160
+        },
+        {
+            title: "Minimum value",
+            dataIndex: "minValue",
+            render: (minValue: number) => {
+                return VND.format(minValue)
+            },
+            minWidth: 150
         },
         {
             title: 'Start at',

@@ -12,6 +12,7 @@ export interface IProducts {
     title: string;
     images: string[];
     price: number;
+    thumbnail: string;
     discountPercentage: number;
     categoryId: {
         _id: string;
@@ -101,7 +102,7 @@ const ProductPage = () => {
             width: 60,
             render: (item: IProducts) => {
                 return <Image
-                    src={item.images[0]}
+                    src={item.thumbnail}
                     width={50}
                 />
             }

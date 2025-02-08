@@ -89,7 +89,7 @@ const ToggleCategory = (props: IProps) => {
             } else {
                 notification.error({
                     message: "Có lỗi xảy ra",
-                    description: JSON.stringify(res.message)
+                    description: res.message && Array.isArray(res.message) ? res.message.toString() : res.message,
                 })
             }
         } catch (error) {

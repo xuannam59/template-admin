@@ -26,6 +26,13 @@ const ProductViewDetail = (props: IProps) => {
                     column={2}
                 >
                     <Descriptions.Item label="Hình ảnh" span={2}>
+                        <Image
+                            key={dataViewDetail?.thumbnail}
+                            width={100}
+                            src={dataViewDetail?.thumbnail}
+                        />
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Danh sách ảnh" span={2}>
                         {dataViewDetail?.images.map((url) => (
                             <Image
                                 key={url}
