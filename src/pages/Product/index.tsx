@@ -2,7 +2,7 @@ import handleAPI from '@/apis/handleAPI'
 import ProductViewDetail from '@/components/Product/ProductViewDetail'
 import TableData from '@/components/Table/TableData'
 import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
-import { Image, message, notification, Popconfirm, TableColumnsType, TableProps, Tag } from 'antd'
+import { Image, message, notification, Popconfirm, TableColumnsType, TableProps, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
@@ -39,7 +39,7 @@ export interface IProducts {
         email: string;
     };
 }
-
+const { Text } = Typography
 const ProductPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [listProduct, setListProduct] = useState<IProducts[]>([]);
@@ -110,22 +110,24 @@ const ProductPage = () => {
         {
             title: 'Tên sản phẩm',
             dataIndex: 'title',
-            sorter: true,
             fixed: 'left',
-            ellipsis: true,
             render: (text, record) => {
-                const maxLength = 26;
-                const displayText = text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-                return (
-                    <Link
-                        to={''}
-                        onClick={() => {
-                            setDataViewDetail(record);
-                            setIsOpenDetail(true);
-                        }}
-                    >
-                        {displayText}
-                    </Link>
+                return (<>
+                    <div style={{ maxWidth: "250px" }}>
+                        <Text
+                            ellipsis
+                            onClick={() => {
+                                setDataViewDetail(record);
+                                setIsOpenDetail(true);
+                            }}
+
+                        >
+                            <Link to="">
+                                {text}
+                            </Link>
+                        </Text>
+                    </div>
+                </>
                 );
             }
         },
@@ -143,7 +145,7 @@ const ProductPage = () => {
             minWidth: 160,
             render: (item: IProducts) => {
                 return (
-                    <>{item.chip} {item.ram}GB RAM {item.ssd}GB SSD {item.gpu ? `${item.gpu} GPU` : ""}</>
+                    <>{item.chip} {item.ram} RAM {item.ssd} SSD {item.gpu ? `${item.gpu} GPU` : ""}</>
                 )
             },
         },

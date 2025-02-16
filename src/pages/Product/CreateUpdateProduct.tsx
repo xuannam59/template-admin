@@ -1,5 +1,5 @@
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, ColorPicker, Form, Input, InputNumber, message, notification, Radio, Space, TreeSelect, Typography, Upload } from 'antd'
+import { Button, Card, ColorPicker, Form, Input, InputNumber, message, notification, Radio, Select, Space, TreeSelect, Typography, Upload } from 'antd'
 import { useEffect, useState, } from 'react'
 import { v4 as uuidv4 } from 'uuid';
 import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
@@ -8,7 +8,7 @@ import { tree } from '@/helpers/createTree';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import type { UploadFile, UploadChangeParam } from 'antd/es/upload/interface';
-
+import { computerConfiguration } from '@/constants/appInfos';
 
 const { Title } = Typography;
 
@@ -21,6 +21,10 @@ const CreateUpdateProduct = () => {
     const [description, setDescription] = useState("");
     const [productDetail, setProductDetail] = useState<any>();
     const { id } = useParams();
+    const configurationOptions = computerConfiguration.reduce((acc, item) => {
+        acc[item.key] = item.value.map(value => ({ label: value, value }));
+        return acc;
+    }, {} as Record<string, { label: string, value: string }[]>);
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -43,7 +47,7 @@ const CreateUpdateProduct = () => {
                         _id: item._id,
                         title: item.title,
                         value: item._id,
-                        parentId: item.parentId ? item.parentId._id : ""
+                        parentId: item.parentId ? item.parentId : ""
                     }
                 })
                 const categoryTree = tree(categories, "");
@@ -113,23 +117,17 @@ const CreateUpdateProduct = () => {
 
     const onFinish = async (values: any) => {
         setLoading(true);
-        const { categoryId, discountPercentage,
-            price, status, title, versions, ram, chip, ssd, gpu } = values
-
         const data: any = {
-            categoryId, discountPercentage,
-            price, status,
-            title, versions, ram, chip, ssd,
-            description: description, gpu
+            ...values,
+            description: description
         }
 
         try {
             const thumbnailFile = thumbnail[0]
-
             if (thumbnailFile && thumbnailFile.originFileObj) {
                 const url = await handleUploadFileAPI(thumbnailFile.originFileObj);
                 if (url.data) {
-                    data.thumbnail = url;
+                    data.thumbnail = url.data.fileUpload;
                 } else {
                     notification.error({
                         message: thumbnailFile.name,
@@ -190,19 +188,12 @@ const CreateUpdateProduct = () => {
     }
 
     const handleChange = (setState: React.Dispatch<React.SetStateAction<UploadFile[]>>) =>
-        ({ fileList: newFileList }: UploadChangeParam<UploadFile>) => {
-            const items = newFileList.map((item) =>
-                item.originFileObj
-                    ? {
-                        ...item,
-                        url: URL.createObjectURL(item.originFileObj),
-                        status: 'done' as const,
-                    }
-                    : { ...item }
-            );
-            setState(items);
-        };
-
+        ({ fileList: newFileList }: UploadChangeParam<UploadFile>) =>
+            setState(newFileList.map((item) => ({
+                ...item,
+                url: item.originFileObj ? URL.createObjectURL(item.originFileObj) : item.url,
+                status: 'done'
+            })));
 
     return (
         <>
@@ -267,7 +258,7 @@ const CreateUpdateProduct = () => {
                                         label="Chip"
                                         name="chip"
                                     >
-                                        <Input placeholder='Chip' />
+                                        <Select options={configurationOptions.chip} placeholder='Chip' />
                                     </Form.Item>
                                 </div>
                                 <div className="col">
@@ -275,7 +266,7 @@ const CreateUpdateProduct = () => {
                                         label="RAM"
                                         name="ram"
                                     >
-                                        <Input placeholder='RAM' />
+                                        <Select options={configurationOptions.ram} placeholder='RAM' />
                                     </Form.Item>
                                 </div>
                                 <div className="col">
@@ -283,7 +274,7 @@ const CreateUpdateProduct = () => {
                                         label="SSD"
                                         name="ssd"
                                     >
-                                        <Input placeholder='SSD' />
+                                        <Select options={configurationOptions.ssd} placeholder='SSD' />
                                     </Form.Item>
                                 </div>
                                 <div className="col">

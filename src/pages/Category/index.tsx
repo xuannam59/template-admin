@@ -12,10 +12,7 @@ export interface ICategories {
     _id: string;
     title: string;
     description: string;
-    parentId: {
-        _id: string,
-        title: string
-    };
+    parentId: string;
     status: string;
     displayMode: boolean;
     image: string;
@@ -55,7 +52,7 @@ const CategoryPage = () => {
                         image: item.image,
                         displayMode: item.displayMode,
                         description: item?.description ?? "",
-                        parentId: item?.parentId?._id ?? "",
+                        parentId: item?.parentId ?? "",
                     }
                 })
                 const result: any = tree(data);

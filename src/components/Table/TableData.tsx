@@ -69,7 +69,7 @@ const TableData = (props: IProps) => {
                 total: total,
                 showSizeChanger: pageSize ? true : false,
                 pageSizeOptions: [8, 15, 20, 50],
-                showTotal: (total, range) => { return <div>{range[0]}-{range[1]} trên {total}rows</div> }
+                showTotal: (total, range) => { return <div>{range[0]}-{range[1]} trên {total} rows</div> }
             }}
             scroll={{
                 x: 'max-content',

@@ -1,5 +1,5 @@
 import { IProducts } from "@/pages/Product";
-import { Badge, Descriptions, Divider, Drawer, Image, Tag } from "antd";
+import { Descriptions, Divider, Drawer, Image, Tag } from "antd";
 import dayjs from "dayjs";
 
 interface IProps {
@@ -25,14 +25,8 @@ const ProductViewDetail = (props: IProps) => {
                     bordered
                     column={2}
                 >
+                    <Descriptions.Item label="Mã sản phẩm" span={2}>{dataViewDetail?._id}</Descriptions.Item>
                     <Descriptions.Item label="Hình ảnh" span={2}>
-                        <Image
-                            key={dataViewDetail?.thumbnail}
-                            width={100}
-                            src={dataViewDetail?.thumbnail}
-                        />
-                    </Descriptions.Item>
-                    <Descriptions.Item label="Danh sách ảnh" span={2}>
                         {dataViewDetail?.images.map((url) => (
                             <Image
                                 key={url}
@@ -41,7 +35,6 @@ const ProductViewDetail = (props: IProps) => {
                             />
                         ))}
                     </Descriptions.Item>
-                    <Descriptions.Item label="Mã sản phẩm" span={2}>{dataViewDetail?._id}</Descriptions.Item>
                     <Descriptions.Item label="Tên sản phẩm" span={2}>
                         {dataViewDetail?.title}
                     </Descriptions.Item>
