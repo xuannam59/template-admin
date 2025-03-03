@@ -10,13 +10,13 @@ interface IProps {
     api: string
     columns: TableColumnsType<any>;
     dataSource: any[];
-    setFilterQuery: (value: string) => void,
-    setCurrent: (value: number) => void;
-    setSortQuery: (value: string) => void,
+    setFilterQuery: React.Dispatch<React.SetStateAction<string>>;
+    setSortQuery: React.Dispatch<React.SetStateAction<string>>;
+    setCurrent: React.Dispatch<React.SetStateAction<number>>;
+    setPageSize: React.Dispatch<React.SetStateAction<number>>;
     current?: number;
     pageSize?: number;
     total?: number;
-    onChange?: any;
     scrollY?: number
     dataExport?: any[]
     hiddenBtnAdd?: boolean
@@ -28,9 +28,9 @@ interface IProps {
 const TableData = (props: IProps) => {
     const { current, pageSize, total,
         columns, isLoading, dataSource,
-        onChange, setFilterQuery, setSortQuery,
+        setFilterQuery, setSortQuery,
         dataExport, openAddNew, scrollY,
-        hiddenBtnAdd, checkStrictly, setCurrent, api }
+        hiddenBtnAdd, checkStrictly, setCurrent, setPageSize, api }
         = props
     const [selectedIds, setSelectedIds] = useState<React.Key[]>([]);
 
@@ -41,8 +41,24 @@ const TableData = (props: IProps) => {
     const rowSelection: TableRowSelection<any> = {
         selectedRowKeys: selectedIds,
         onChange: onSelectChange,
-        checkStrictly: checkStrictly ? false : true
+        checkStrictly: !checkStrictly
     };
+
+    const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter: any, extra) => {
+        if (pagination.current && pagination.current !== current) {
+            setCurrent(pagination.current);
+        }
+        if (pagination.pageSize && pagination.pageSize !== pageSize) {
+            setPageSize(pagination.pageSize);
+            setCurrent(1);
+        }
+        if (sorter.field && sorter) {
+            let sort1 = (sorter.order === "ascend" ? "" : "-") + sorter.field;
+            setSortQuery(sort1);
+        } else {
+            setSortQuery("-createdAt");
+        }
+    }
 
     return (
         <Table

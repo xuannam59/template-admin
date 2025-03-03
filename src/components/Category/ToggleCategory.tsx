@@ -77,7 +77,7 @@ const ToggleCategory = (props: IProps) => {
 
             data.image =
                 imageUpload.length > 0 && imageUpload[0].originFileObj
-                    ? (await handleUploadFileAPI(imageUpload[0].originFileObj)).data.fileUpload
+                    ? (await handleUploadFileAPI(imageUpload[0].originFileObj, "images/categories")).data.fileUpload
                     : imageUpload[0]?.url ?? "";
             console.log(data);
             const res = await handleAPI(api, data, `${selectData ? "patch" : "post"}`);

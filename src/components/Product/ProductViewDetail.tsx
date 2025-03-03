@@ -65,8 +65,6 @@ const ProductViewDetail = (props: IProps) => {
                     </Descriptions.Item>
                 </Descriptions>
                 <Divider />
-
-
             </Drawer>
         </>
     )

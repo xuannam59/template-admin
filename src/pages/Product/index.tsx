@@ -11,6 +11,7 @@ export interface IProducts {
     _id: string;
     title: string;
     images: string[];
+    cost: number
     price: number;
     thumbnail: string;
     discountPercentage: number;
@@ -46,7 +47,7 @@ const ProductPage = () => {
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(8);
     const [total, setTotal] = useState(0);
-    const [sortQuery, setSortQuery] = useState("");
+    const [sortQuery, setSortQuery] = useState("-createdAt");
     const [filterQuery, setFilterQuery] = useState("");
     const [isOpenDetail, setIsOpenDetail] = useState(false);
     const [dataViewDetail, setDataViewDetail] = useState<IProducts | undefined>(undefined);
@@ -59,7 +60,10 @@ const ProductPage = () => {
 
     const fetchProducts = async () => {
         setIsLoading(true)
-        let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
+        let query = `current=${current}&pageSize=${pageSize}&sort=${sortQuery}`;
+        if (filterQuery) {
+            query += `&slug=${filterQuery}`;
+        }
         try {
             const res = await handleAPI(`/products?${query}`);
             if (res && res.data) {
@@ -110,7 +114,7 @@ const ProductPage = () => {
         {
             title: 'Tên sản phẩm',
             dataIndex: 'title',
-            fixed: 'left',
+            minWidth: 120,
             render: (text, record) => {
                 return (<>
                     <div style={{ maxWidth: "250px" }}>
@@ -292,21 +296,6 @@ const ProductPage = () => {
         },
     ];
 
-    const onChange: TableProps<IProducts>['onChange'] = (pagination, filters, sorter: any, extra) => {
-        if (pagination.current && pagination.current !== current) {
-            setCurrent(pagination.current);
-        }
-        if (pagination.pageSize && pagination.pageSize !== pageSize) {
-            setPageSize(pagination.pageSize);
-            setCurrent(1);
-        }
-        if (sorter.field && sorter) {
-            let sort1 = (sorter.order === "ascend" ? "" : "-") + sorter.field;
-            setSortQuery(sort1);
-        } else {
-            setSortQuery("");
-        }
-    }
 
     const dataExport = listProduct.map((item) => {
         return {
@@ -321,7 +310,7 @@ const ProductPage = () => {
     })
 
     return (
-        <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
+        <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
             <div className="row">
                 <div className="col">
                     <TableData
@@ -333,10 +322,10 @@ const ProductPage = () => {
                         total={total}
                         isLoading={isLoading}
                         dataSource={listProduct}
-                        onChange={onChange}
                         setFilterQuery={setFilterQuery}
                         setSortQuery={setSortQuery}
                         setCurrent={setCurrent}
+                        setPageSize={setPageSize}
                         dataExport={dataExport}
                     />
                 </div>

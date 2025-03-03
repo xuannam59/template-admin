@@ -9,6 +9,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import type { UploadFile, UploadChangeParam } from 'antd/es/upload/interface';
 import { computerConfiguration } from '@/constants/appInfos';
+import { IProducts } from '.';
 
 const { Title } = Typography;
 
@@ -19,7 +20,7 @@ const CreateUpdateProduct = () => {
     const [loading, setLoading] = useState(false);
     const [listCategory, setListCategory] = useState<any[]>();
     const [description, setDescription] = useState("");
-    const [productDetail, setProductDetail] = useState<any>();
+    const [productDetail, setProductDetail] = useState<IProducts>();
     const { id } = useParams();
     const configurationOptions = computerConfiguration.reduce((acc, item) => {
         acc[item.key] = item.value.map(value => ({ label: value, value }));
@@ -65,6 +66,7 @@ const CreateUpdateProduct = () => {
                 const data = res.data
                 const valueForm = {
                     title: data.title,
+                    cost: data.cost,
                     price: data.price,
                     discountPercentage: data.discountPercentage,
                     status: data.status,
@@ -125,7 +127,7 @@ const CreateUpdateProduct = () => {
         try {
             const thumbnailFile = thumbnail[0]
             if (thumbnailFile && thumbnailFile.originFileObj) {
-                const url = await handleUploadFileAPI(thumbnailFile.originFileObj);
+                const url = await handleUploadFileAPI(thumbnailFile.originFileObj, "images/products");
                 if (url.data) {
                     data.thumbnail = url.data.fileUpload;
                 } else {
@@ -146,7 +148,7 @@ const CreateUpdateProduct = () => {
                 const urls: string[] = [];
                 for (const file of fileList) {
                     if (file.originFileObj) {
-                        const url = await handleUploadFileAPI(file.originFileObj);
+                        const url = await handleUploadFileAPI(file.originFileObj, "images/products");
                         if (url.data) {
                             urls.push(url.data.fileUpload)
                         } else {
@@ -288,7 +290,27 @@ const CreateUpdateProduct = () => {
                             </div>
 
                             <div className="row">
-                                <div className="col">
+                                <div className="col-5">
+                                    <Form.Item
+                                        label="Giá nhập"
+                                        name="cost"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Vui lòng không để trống"
+                                            }
+                                        ]}
+                                    >
+                                        <InputNumber
+                                            placeholder='Giá nhập'
+                                            min={0}
+                                            style={{ width: '100%' }}
+                                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                            addonAfter="VND"
+                                        />
+                                    </Form.Item>
+                                </div>
+                                <div className="col-5">
                                     <Form.Item
                                         label="Giá"
                                         name="price"
@@ -308,9 +330,9 @@ const CreateUpdateProduct = () => {
                                         />
                                     </Form.Item>
                                 </div>
-                                <div className="col">
+                                <div className="col-2">
                                     <Form.Item
-                                        label="Phần trăm giảm giá"
+                                        label="% giảm giá"
                                         name="discountPercentage"
                                         rules={[
                                             {

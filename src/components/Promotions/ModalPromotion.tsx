@@ -69,7 +69,7 @@ const ModalPromotion = (props: IProps) => {
                 }
                 data.image =
                     imageUpload.length > 0 && imageUpload[0].originFileObj
-                        ? (await handleUploadFileAPI(imageUpload[0].originFileObj)).data.fileUpload
+                        ? (await handleUploadFileAPI(imageUpload[0].originFileObj, "images/promotions")).data.fileUpload
                         : imageUpload[0].url;
 
                 const res = await handleAPI(

@@ -57,9 +57,6 @@ const CategoryPage = () => {
                 })
                 const result: any = tree(data);
                 setListCategory(result);
-                console.log(result);
-                // setListCategory(res.data.result);
-                // setTotal(res.data.meta.totalItems);
             }
         } catch (error) {
             console.log(error);
@@ -87,7 +84,7 @@ const CategoryPage = () => {
             render: (image: string) => {
                 return <Image
                     src={image}
-                    width={20}
+                    width={40}
                 />
             }
         },
@@ -192,6 +189,7 @@ const CategoryPage = () => {
                             isLoading={isLoading}
                             dataSource={listCategory}
                             setCurrent={() => 1}
+                            setPageSize={() => 1}
                             setFilterQuery={setFilterQuery}
                             setSortQuery={() => { }}
                             openAddNew={() => { setIsModalOpen(true) }}

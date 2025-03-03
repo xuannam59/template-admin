@@ -83,21 +83,6 @@ const Promotions = () => {
             console.log(error)
         }
     }
-    const onChange: TableProps<IPromotions>['onChange'] = (pagination, filters, sorter: any, extra) => {
-        if (pagination.current && pagination.current !== current) {
-            setCurrent(pagination.current);
-        }
-        if (pagination.pageSize && pagination.pageSize !== pageSize) {
-            setPageSize(pagination.pageSize);
-            setCurrent(1);
-        }
-        if (sorter.field && sorter) {
-            let sort1 = (sorter.order === "ascend" ? "" : "-") + sorter.field;
-            setSortQuery(sort1);
-        } else {
-            setSortQuery("");
-        }
-    }
 
     const columns: ColumnProps<IPromotions>[] = [
         {
@@ -214,7 +199,7 @@ const Promotions = () => {
 
     return (
         <>
-            <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
+            <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
                 <div className="row">
                     <div className="col">
                         <TableData
@@ -224,9 +209,9 @@ const Promotions = () => {
                             total={total}
                             setSortQuery={setSortQuery}
                             setCurrent={setCurrent}
+                            setPageSize={setPageSize}
                             setFilterQuery={setFilterQuery}
                             openAddNew={() => { setIsVisible(true) }}
-                            onChange={onChange}
                             columns={columns}
                             dataSource={dataSource}
                             isLoading={isLoading}

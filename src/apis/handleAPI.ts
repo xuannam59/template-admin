@@ -18,7 +18,7 @@ const handleAPI = async (
     });
 }
 
-export const handleUploadFileAPI = (file: any): Promise<response> => {
+export const handleUploadFileAPI = (file: any, folderName: string): Promise<response> => {
     const bodyFormData = new FormData();
     bodyFormData.append("file", file);
     return axios({
@@ -26,7 +26,8 @@ export const handleUploadFileAPI = (file: any): Promise<response> => {
         url: '/file/upload',
         data: bodyFormData,
         headers: {
-            "Content-Type": "multipart/form-data"
+            "Content-Type": "multipart/form-data",
+            "folder-name": folderName
         }
     });
 }
