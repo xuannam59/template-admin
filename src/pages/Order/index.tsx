@@ -2,7 +2,7 @@ import handleAPI from "@/apis/handleAPI";
 import OrderDetail from "@/components/Order/OrderDetail";
 import OrderStatistic from "@/components/Order/OrderStatistic";
 import TableData from "@/components/Table/TableData";
-import { Card, DatePicker, notification, Radio, Select, Space, Statistic, TableColumnsType, Tag, Typography } from "antd";
+import { Card, DatePicker, notification, Radio, Select, Space, TableColumnsType, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 
@@ -37,7 +37,7 @@ const OrderPage = () => {
     const [pageSize, setPageSize] = useState(5);
     const [total, setTotal] = useState(0);
     const [filterQuery, setFilterQuery] = useState("");
-    const [sortQuery, setSortQuery] = useState("-createAt");
+    const [sortQuery, setSortQuery] = useState("-updatedAt");
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [dataDetail, setDataDetail] = useState<IOrder>();
     const [dateSelect, setDateSelect] = useState<"day" | "week" | "month" | "year">("year");

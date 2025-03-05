@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const { Paragraph } = Typography
-const StatisticDashboard = (props: IProps) => {
+const DashboardStatistic = (props: IProps) => {
   const { title, value, image, color } = props;
   return (
     <div className="col text-center">
@@ -47,4 +47,4 @@ const StatisticDashboard = (props: IProps) => {
   )
 }
 
-export default StatisticDashboard
+export default DashboardStatistic

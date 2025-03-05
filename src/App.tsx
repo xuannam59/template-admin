@@ -5,7 +5,30 @@ import { useAppDispatch, useAppSelector } from './redux/hook';
 import { doGetAccountAction } from './redux/reducers/auth.reducer';
 import Loading from './components/Loading';
 import Routers from './routers/Router';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    PointElement,
+    LineElement,
+    Filler,
+} from 'chart.js';
 
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Filler,
+    Legend
+);
 function App() {
     useEffect(() => {
         getAccount()

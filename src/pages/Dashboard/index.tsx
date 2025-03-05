@@ -1,5 +1,6 @@
 import handleAPI from "@/apis/handleAPI";
-import StatisticDashboard from "@/components/Dashboard/StatisticDashboard";
+import DashboardStatistic from "@/components/Dashboard/DashboardStatistic";
+import PurchaseStatistic from "@/components/Dashboard/PurchaseStatistic";
 import { VND } from "@/helpers/handleCurrency";
 import { Card, Spin, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -59,28 +60,27 @@ const AdminPage = () => {
             <div className="container">
                 <div className="row">
                     <div className="col-12 col-md-8">
-                        <Card className="mb-4">
-                            <Title level={4}>Tổng quan bán hàng</Title>
+                        <Card title="Sales OverView">
                             <div className="row">
-                                <StatisticDashboard
+                                <DashboardStatistic
                                     title="Đơn hàng"
                                     value={statistic.length}
                                     image="https://img.icons8.com/?size=50&id=7492&format=png&color=339AF0"
                                     color="339AF0"
                                 />
-                                <StatisticDashboard
+                                <DashboardStatistic
                                     title="Doanh thu"
                                     value={VND.format(revenue)}
                                     image="https://img.icons8.com/?size=100&id=1gJg-CpQvqUy&format=png&color=CC5DE8"
                                     color="CC5DE8"
                                 />
-                                <StatisticDashboard
+                                <DashboardStatistic
                                     title="Lợi nhuận"
                                     value={VND.format(profit)}
                                     image="https://img.icons8.com/?size=100&id=70641&format=png&color=FCC419"
                                     color="FCC419"
                                 />
-                                <StatisticDashboard
+                                <DashboardStatistic
                                     title="Chi phí"
                                     value={VND.format(cost)}
                                     image="https://img.icons8.com/?size=100&id=SiZYMYfzXNfS&format=png&color=94D82D"
@@ -90,17 +90,16 @@ const AdminPage = () => {
                         </Card>
                     </div>
                     <div className="col-12 col-md-4">
-                        <Card>
-                            <Title level={4}>Thông tin giao hàng</Title>
+                        <Card title="Delivery OverView">
                             <div className="row">
-                                <StatisticDashboard
-                                    title="Sản phẩm đang giao"
+                                <DashboardStatistic
+                                    title="Đang giao"
                                     value={productsDelivered}
                                     image="https://img.icons8.com/?size=50&id=11229&format=png&color=FCC419"
                                     color="FCC419"
                                 />
-                                <StatisticDashboard
-                                    title="Sản phẩm đã giao"
+                                <DashboardStatistic
+                                    title="Giao thành công"
                                     value={productsComplete}
                                     image="https://img.icons8.com/?size=100&id=IvSuowGLxfbB&format=png&color=CC5DE8"
                                     color="CC5DE8"
@@ -109,6 +108,7 @@ const AdminPage = () => {
                         </Card>
                     </div>
                 </div>
+                <PurchaseStatistic />
             </div>
         </>)
 }
