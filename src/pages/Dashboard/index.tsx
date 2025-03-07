@@ -1,6 +1,7 @@
 import handleAPI from "@/apis/handleAPI";
 import DashboardStatistic from "@/components/Dashboard/DashboardStatistic";
 import PurchaseStatistic from "@/components/Dashboard/PurchaseStatistic";
+import TopSellingAndLowQuantityStatistic from "@/components/Dashboard/TopSellingAndLowQuantityStatistic";
 import { VND } from "@/helpers/handleCurrency";
 import { Card, Spin, Typography } from "antd";
 import { useEffect, useState } from "react";
@@ -109,6 +110,7 @@ const AdminPage = () => {
                     </div>
                 </div>
                 <PurchaseStatistic />
+                <TopSellingAndLowQuantityStatistic />
             </div>
         </>)
 }

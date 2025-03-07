@@ -29,7 +29,7 @@ const DashboardStatistic = (props: IProps) => {
               height: "auto",
             }}
             src={image}
-            alt="sales-performance"
+            alt={title}
           />
         </div>
       </div>

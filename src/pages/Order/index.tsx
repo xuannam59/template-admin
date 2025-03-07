@@ -34,10 +34,10 @@ const OrderPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isOpenDetail, setIsOpenDetail] = useState(false);
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(10);
     const [total, setTotal] = useState(0);
     const [filterQuery, setFilterQuery] = useState("");
-    const [sortQuery, setSortQuery] = useState("-updatedAt");
+    const [sortQuery, setSortQuery] = useState("-createdAt");
     const [orders, setOrders] = useState<IOrder[]>([]);
     const [dataDetail, setDataDetail] = useState<IOrder>();
     const [dateSelect, setDateSelect] = useState<"day" | "week" | "month" | "year">("year");
@@ -177,6 +177,7 @@ const OrderPage = () => {
                         value={status}
                         style={{ width: 180 }}
                         onChange={(val) => handleChangeSelect(record._id, val)}
+                        disabled={!(status === "pending" || status === "shipping")}
                         options={[
                             { value: "pending", label: <Text>Đang đóng hàng</Text> },
                             { value: "shipping", label: <Text type="warning">Đang giao hàng</Text> },
@@ -279,7 +280,7 @@ const OrderPage = () => {
                 <div className="row">
                     <OrderStatistic
                         title="Tổng số"
-                        value={orders.length}
+                        value={total}
                         label={`Trong ${daysDifference} ngày`}
                         color="#0F0F0F"
                     />

@@ -14,6 +14,7 @@ export interface IProducts {
     cost: number
     price: number;
     thumbnail: string;
+    sold: number;
     discountPercentage: number;
     categoryId: {
         _id: string;
@@ -197,13 +198,13 @@ const ProductPage = () => {
         },
         {
             title: 'Số lượng đã bán',
-            dataIndex: "sales",
+            dataIndex: "sold",
             minWidth: 150,
             align: "center",
-            render: (sales: number) => {
+            render: (sold: number) => {
                 return <>
                     {
-                        <Tag color='green'>{sales}</Tag>
+                        <Tag color='green'>{sold}</Tag>
                     }
                 </>
             }
