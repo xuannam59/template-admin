@@ -82,7 +82,7 @@ const ToggleCategory = (props: IProps) => {
             console.log(data);
             const res = await handleAPI(api, data, `${selectData ? "patch" : "post"}`);
             if (res && res.data) {
-                message.success(`${selectData ? "Cập nhập" : "Tạo"} danh mục thành công`);
+                message.success(`${selectData ? "Cập nhật" : "Tạo"} danh mục thành công`);
                 getData();
                 fetchCategories();
                 onCancel();
@@ -90,7 +90,7 @@ const ToggleCategory = (props: IProps) => {
                 notification.error({
                     message: "Có lỗi xảy ra",
                     description: res.message && Array.isArray(res.message) ? res.message.toString() : res.message,
-                })
+                });
             }
         } catch (error) {
             console.log(error)
@@ -123,11 +123,11 @@ const ToggleCategory = (props: IProps) => {
     return (
         <>
             <Modal
-                title={selectData ? "Cập nhập danh mục" : "Tạo mới danh mục"}
+                title={selectData ? "Cập nhật danh mục" : "Tạo mới danh mục"}
                 open={isModalOpen}
                 onOk={() => form.submit()}
                 onCancel={onCancel}
-                okText={selectData ? "Cập nhập" : "Tạo mới"}
+                okText={selectData ? "Cập nhật" : "Tạo mới"}
                 cancelText={"Huỷ"}
                 maskClosable={false}
                 okButtonProps={{

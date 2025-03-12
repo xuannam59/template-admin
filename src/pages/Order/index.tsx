@@ -158,7 +158,24 @@ const OrderPage = () => {
                     case "cod":
                         return <Tag color="#2db7f5">Thanh toán khi nhận hàng</Tag>
                     case "tt":
-                        return <Tag color="#87d068">"hanh toán chuyển khoản</Tag>
+                        return <Tag color="#87d068">Thanh toán bằng ngân hàng</Tag>
+                    default:
+                        return <Tag color="#f50">Không xác định</Tag>;
+
+                }
+            }
+        },
+        {
+            title: "Trạng thái thanh toán",
+            dataIndex: "paymentStatus",
+            align: "center",
+            minWidth: 200,
+            render: (paymentMethod: number) => {
+                switch (paymentMethod) {
+                    case 0:
+                        return <Tag>Chưa thanh toán</Tag>
+                    case 1:
+                        return <Tag>Đã thanh toán</Tag>
                     default:
                         return <Tag color="#f50">Không xác định</Tag>;
 
@@ -177,13 +194,13 @@ const OrderPage = () => {
                         value={status}
                         style={{ width: 180 }}
                         onChange={(val) => handleChangeSelect(record._id, val)}
-                        disabled={!(status === "pending" || status === "shipping")}
+                        // disabled={!(status === "pending" || status === "shipping")}
                         options={[
                             { value: "pending", label: <Text>Đang đóng hàng</Text> },
                             { value: "shipping", label: <Text type="warning">Đang giao hàng</Text> },
                             { value: "success", label: <Text type="success">Giao hàng thành công</Text> },
                             { value: "cancel", label: <Text type="danger">Huỷ đơn hàng</Text> },
-                            { value: "return", label: 'Trả lại hàng', disabled: true },
+                            { value: "return", label: 'Trả lại hàng' },
                         ]}
                     />
                 </>
@@ -211,7 +228,7 @@ const OrderPage = () => {
 
     const handleChangeSelect = async (id: string, status: string) => {
         setIsLoading(true);
-        const api = `orders/change-status/${id}`;
+        const api = `orders/update/${id}`;
         const data = {
             status
         }
@@ -221,8 +238,12 @@ const OrderPage = () => {
                 setOrders(prev => {
                     prev.forEach(item => {
                         if (item._id === id) {
+                            if (status === "success") {
+                                item.paymentStatus = 1;
+                            }
                             item.status = status;
                         }
+
                     });
                     return prev;
                 })
@@ -300,27 +321,13 @@ const OrderPage = () => {
                     <OrderStatistic
                         title="Tổng số trả hàng"
                         value={orders.filter(item => item.status === "return").length}
-                        total={orders.reduce((a, b) => {
-                            if (b.status === "return") {
-                                return a + b.totalAmount;
-                            }
-                            return a;
-                        }, 0)}
                         label={`Trong ${daysDifference} ngày`}
-                        desc="Chi phí"
                         color="#845EBC"
                     />
                     <OrderStatistic
                         title="Trên đường giao"
                         value={orders.filter(item => item.status === "shipping").length}
-                        total={orders.reduce((a, b) => {
-                            if (b.status === "shipping") {
-                                return a + b.totalAmount;
-                            }
-                            return a;
-                        }, 0)}
                         label="Đã đặt"
-                        desc="Chi phí"
                         color="#F36960"
                     />
                 </div>

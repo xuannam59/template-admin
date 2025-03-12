@@ -1,7 +1,7 @@
 import handleAPI from "@/apis/handleAPI";
 import { VND } from "@/helpers/handleCurrency";
 import { IProducts } from "@/pages/Product";
-import { Avatar, Card, Image, List, Space, Table, Tag, Typography } from "antd"
+import { Avatar, Card, List, Space, Table, Tag, Typography } from "antd";
 import { useEffect, useState } from "react";
 
 
@@ -58,7 +58,7 @@ const TopSellingAndLowQuantityStatistic = () => {
                                     dataIndex: "title",
                                     key: "title",
                                     width: "",
-                                    render: (title: string, record) => <>
+                                    render: (title: string) => <>
                                         <Space>
                                             <Text
                                                 ellipsis={{ tooltip: title }}
@@ -102,10 +102,10 @@ const TopSellingAndLowQuantityStatistic = () => {
                 </div>
                 <div className="col-12 col-md-4">
                     <Card
-                        loading={isLoading}
                         title="Low Quantity stock"
                     >
                         <List
+                            loading={isLoading}
                             dataSource={data.lowQuantity}
                             renderItem={item => <List.Item key={item._id} extra={<Tag>Low</Tag>}>
                                 <List.Item.Meta

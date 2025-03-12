@@ -1,12 +1,12 @@
 import handleAPI from "@/apis/handleAPI";
 import ModalPromotion from "@/components/Promotions/ModalPromotion";
-import { Avatar, Button, message, Modal, notification, Space, Tag, Typography } from "antd"
-import { useEffect, useState } from "react";
-import { ColumnProps, TableProps } from "antd/es/table";
-import dayjs from "dayjs";
-import { TbEdit, TbTrash } from "react-icons/tb";
 import TableData from "@/components/Table/TableData";
 import { VND } from "@/helpers/handleCurrency";
+import { Avatar, Button, message, Modal, notification, Space, Tag } from "antd";
+import { ColumnProps } from "antd/es/table";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { TbEdit, TbTrash } from "react-icons/tb";
 
 export interface IPromotions {
     _id: string
@@ -33,8 +33,6 @@ export interface IPromotions {
 
 const { confirm } = Modal
 
-const { Text } = Typography
-
 const Promotions = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +41,7 @@ const Promotions = () => {
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(8);
     const [total, setTotal] = useState(0);
-    const [sortQuery, setSortQuery] = useState("");
+    const [sortQuery, setSortQuery] = useState("-createdAt");
     const [filterQuery, setFilterQuery] = useState("");
 
     useEffect(() => {
@@ -52,7 +50,7 @@ const Promotions = () => {
 
     const getPromotions = async () => {
         setIsLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}${sortQuery ? `&sort=${sortQuery}` : "&sort=-createdAt"}`;
+        let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}&sort=-createdAt`;
         try {
             const res = await handleAPI(`/promotions?${query}`);
             if (res.data && res) {

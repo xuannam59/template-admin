@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 const PurchaseStatistic = () => {
     const [timeTypeSelected, setTimeTypeSelected] = useState<"week" | "month" | "year">("month");
+    const [isLoading, setIsLoading] = useState(false);
     const [data, setData] = useState<{
         date: string,
         purchase: number,
@@ -22,6 +23,7 @@ const PurchaseStatistic = () => {
     }, [timeTypeSelected]);
 
     const getPurchase = async (start: string, end: string, numbers: number) => {
+        setIsLoading(true);
         const api = `orders/purchase-statistic?start=${start}&end=${end}&numbers=${numbers}`;
         try {
             const res = await handleAPI(api);
@@ -30,6 +32,8 @@ const PurchaseStatistic = () => {
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false)
         }
     }
 
@@ -50,6 +54,7 @@ const PurchaseStatistic = () => {
         <div className="row mt-4">
             <div className="col-12 col-md-6">
                 <Card
+                    loading={isLoading}
                     title="Purchase"
                     extra={<>
                         <Radio.Group
@@ -80,7 +85,10 @@ const PurchaseStatistic = () => {
                 </Card>
             </div>
             <div className="col-12 col-md-6">
-                <Card title={"Order Summary"}>
+                <Card
+                    loading={isLoading}
+                    title={"Order Summary"}
+                >
                     <Line
                         options={options}
                         data={{

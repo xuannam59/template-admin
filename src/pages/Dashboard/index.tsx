@@ -3,7 +3,7 @@ import DashboardStatistic from "@/components/Dashboard/DashboardStatistic";
 import PurchaseStatistic from "@/components/Dashboard/PurchaseStatistic";
 import TopSellingAndLowQuantityStatistic from "@/components/Dashboard/TopSellingAndLowQuantityStatistic";
 import { VND } from "@/helpers/handleCurrency";
-import { Card, Spin, Typography } from "antd";
+import { Card, Spin } from "antd";
 import { useEffect, useState } from "react";
 
 interface IStatistic {
@@ -18,7 +18,7 @@ interface IStatistic {
     }>;
     status: string;
 }
-const { Title } = Typography
+
 const AdminPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [statistic, setStatistic] = useState<IStatistic[]>([]);
