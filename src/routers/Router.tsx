@@ -14,6 +14,8 @@ import GeneralSettingPage from "@/pages/GeneralSettings";
 import Promotions from "@/pages/Promotions";
 import CreateUpdateProduct from "@/pages/Product/CreateUpdateProduct";
 import FakeProducts from "@/pages/Product/FakeProducts";
+import RolePage from "@/pages/Role";
+import PermissionPage from "@/pages/Permission";
 
 
 const Routers = () => {
@@ -33,6 +35,8 @@ const Routers = () => {
                     <Route path="/" element={<ProtectedRoute><LayoutAdmin /></ProtectedRoute>} >
                         <Route index element={<AdminPage />} />
                         <Route path="/users" element={<UserPage />} />
+                        <Route path="/roles" element={<RolePage />} />
+                        <Route path="/permissions" element={<PermissionPage />} />
                         <Route path="products"  >
                             <Route index element={<ProductPage />} />
                             <Route path="create" element={<CreateUpdateProduct />} />

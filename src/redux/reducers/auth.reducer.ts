@@ -8,13 +8,15 @@ export interface authSate {
         email: string;
         name: string;
         role: {
-            _id: string,
-            name: string
+            _id: string;
+            name: string;
         };
         avatar: string;
         permission: {
-            _id: string,
-            name: string
+            _id: string;
+            method: string;
+            module: string;
+            apiPath: string;
         }[]
     }
 }

@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import {
     TbCategory,
     TbHome, TbPackage, TbPackages,
-    TbSettings, TbSquareRoundedPercentage,
-    TbUsersGroup
+    TbSettings, TbShield, TbShoppingCart, TbSquareRoundedPercentage,
+    TbUser,
+    TbUsersGroup,
+    TbUserShield
 } from "react-icons/tb";
 import { Link, useLocation } from "react-router-dom";
 
@@ -23,7 +25,7 @@ const SiderComponent = (props: IProp) => {
             const allRoute = [
                 "", "users", "products",
                 "categories", "general-settings", "orders",
-                "promotions"];
+                "promotions", "roles", "permissions"];
             const currentRoute = allRoute.find((item) => location.pathname.split("/")[1] === item);
             if (currentRoute) {
                 setActiveMenu(currentRoute);
@@ -56,13 +58,23 @@ const SiderComponent = (props: IProp) => {
         },
         {
             key: 'users',
-            icon: <TbUsersGroup size={24} />,
+            icon: <TbUser size={24} />,
             label: <Link to={'/users'}>Users</Link>,
         },
         {
+            key: 'roles',
+            icon: <TbUserShield size={24} />,
+            label: <Link to={'/roles'}>Roles</Link>,
+        },
+        {
+            key: 'permissions',
+            icon: <TbShield size={24} />,
+            label: <Link to={'/permissions'}>Permissions</Link>,
+        },
+        {
             key: 'orders',
-            icon: <TbPackages size={24} />,
-            label: <Link to={'/orders'}>Order</Link>,
+            icon: <TbShoppingCart size={24} />,
+            label: <Link to={'/orders'}>Orders</Link>,
         },
         {
             key: 'general-settings',

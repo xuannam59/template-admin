@@ -6,7 +6,7 @@ import UserModalCreate from "@/components/User/UserModalCreate";
 import UserModalUpdate from "@/components/User/UserModalUpdate";
 import UserViewDetail from "@/components/User/UserViewDetail";
 import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
-import { message, notification, Popconfirm, Table, TableColumnsType, TableProps, Typography } from "antd";
+import { message, notification, Popconfirm, Table, TableColumnsType, TableProps } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -24,8 +24,6 @@ export interface IUDataType {
     createdAt: Date;
     updatedAt: Date;
 }
-
-const { Title } = Typography
 
 const UserPage = () => {
     const [isLoading, setIsLoading] = useState(false);

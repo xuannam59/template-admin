@@ -110,7 +110,6 @@ const OrderPage = () => {
             fixed: 'left',
             minWidth: 60
         },
-
         {
             title: "Tên khách hàng",
             dataIndex: "receiver",

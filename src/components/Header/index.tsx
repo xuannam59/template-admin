@@ -32,8 +32,9 @@ interface INotifications {
 const { Text } = Typography
 const HeaderComponent = (props: IProp) => {
     const { collapsed, setCollapsed } = props;
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(8);
     const [notifications, setNotifications] = useState<INotifications[]>([]);
+    const [totalItems, setTotalItems] = useState(0);
     const [isVisibleDrawer, setIsVisibleDrawer] = useState(false);
     const user = useAppSelector(state => state.auth.user);
     const dispatch = useAppDispatch();
@@ -74,6 +75,7 @@ const HeaderComponent = (props: IProp) => {
             const res = await handleAPI(api);
             if (res.data) {
                 setNotifications(res.data.result);
+                setTotalItems(res.data.totalItems);
             }
         } catch (error) {
             console.log(error)
@@ -97,7 +99,7 @@ const HeaderComponent = (props: IProp) => {
                 <div className="col text-end">
                     <Space>
                         <Button type="text" onClick={() => setIsVisibleDrawer(true)}>
-                            <Badge count={notifications.filter(item => !item.isRead).length} showZero>
+                            <Badge count={totalItems} showZero>
                                 <TbBell size={25} style={{ cursor: "pointer" }} />
                             </Badge >
                         </Button>
