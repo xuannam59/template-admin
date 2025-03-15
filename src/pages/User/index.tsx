@@ -1,26 +1,31 @@
 import handleAPI from "@/apis/handleAPI";
+import Access from "@/components/Share/Access";
 import UserImport from "@/components/User/data/UserImport";
-import UserHeaderTable from "@/components/User/UserHeaderTable";
 import InputSearch from "@/components/User/InputSearch";
-import UserModalCreate from "@/components/User/UserModalCreate";
-import UserModalUpdate from "@/components/User/UserModalUpdate";
+import ModalUser from "@/components/User/ModalUser";
+import UserHeaderTable from "@/components/User/UserHeaderTable";
 import UserViewDetail from "@/components/User/UserViewDetail";
-import { DeleteTwoTone, EditTwoTone } from "@ant-design/icons";
-import { message, notification, Popconfirm, Table, TableColumnsType, TableProps } from "antd";
+import { ALL_PERMISSIONS } from "@/constants/permissions";
+import { Button, message, Modal, notification, Space, Table, TableColumnsType, TableProps } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import { TbEdit, TbTrash } from "react-icons/tb";
 import { Link } from "react-router-dom";
 
 
-export interface IUDataType {
+export interface IUser {
     _id: string;
     name: string;
     email: string;
     phone: string;
+    avatar: string;
+    age: number;
+    gender: string;
     role: {
         _id: string,
-        name: string
+        title: string
     };
+    slug: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -34,10 +39,9 @@ const UserPage = () => {
     const [filter, setFilter] = useState("");
     const [listUser, setListUser] = useState([]);
     const [isOpenDetail, setIsOpenDetail] = useState(false);
-    const [dataViewDetail, setDataViewDetail] = useState<IUDataType | undefined>(undefined);
-    const [isModalOpenCreate, setIsModalOpenCreate] = useState(false);
-    const [isModalOpenUpdate, setIsModalOpenUpdate] = useState(false);
-    const [dataSelect, setDataSelect] = useState<any>(undefined);
+    const [dataViewDetail, setDataViewDetail] = useState<IUser | undefined>(undefined);
+    const [isVisible, setIsVisible] = useState(false);
+    const [dataSelected, setDataSelected] = useState<any>(undefined);
     const [isModalOpenImport, setIsModalOpenImport] = useState(false);
 
 
@@ -62,7 +66,7 @@ const UserPage = () => {
 
     }
 
-    const handelDelete = async (id: string) => {
+    const handleRemove = async (id: string) => {
         setIsLoading(true)
         const res = await handleAPI(`/users/${id}`, "", "delete");
         if (res && res.data) {
@@ -77,10 +81,10 @@ const UserPage = () => {
         setIsLoading(false)
     }
 
-    const columns: TableColumnsType<IUDataType> = [
+    const columns: TableColumnsType<IUser> = [
         {
             title: 'STT',
-            render: (_, record, index) => {
+            render: (_, _1, index) => {
                 return (index + 1) + (current - 1) * pageSize
             },
             fixed: 'left',
@@ -88,15 +92,14 @@ const UserPage = () => {
         },
         {
             title: 'ID',
-            dataIndex: '_id',
             fixed: 'left',
             width: 60,
-            render: (text, record) => {
+            render: (user: IUser) => {
                 return <Link to={''} onClick={() => {
-                    setDataViewDetail(record);
+                    setDataViewDetail(user);
                     setIsOpenDetail(true)
                 }}
-                >{text}</Link>
+                >{user._id}</Link>
             }
         },
         {
@@ -113,20 +116,23 @@ const UserPage = () => {
         {
             title: 'Số điện thoại',
             dataIndex: 'phone',
+            width: 150
         },
         {
             title: 'Vai trò',
             dataIndex: 'role',
-            render: (_, record) => {
-                return <span>{record.role.name}</span>
-            }
+            render: (role) => {
+                return <span>{role.title}</span>
+            },
+            width: 100
         },
         {
             title: 'Ngày cập nhập',
             dataIndex: 'updatedAt',
             render: (text) => {
                 return dayjs(text).format("DD/MM/YYYY")
-            }
+            },
+            width: 150
         },
         {
             title: 'Action',
@@ -134,39 +140,46 @@ const UserPage = () => {
             render: (text, record) => {
                 return (
                     <>
-                        <div className="d-flex gap-3">
-                            <EditTwoTone
-                                style={{ fontSize: '18px', cursor: "pointer" }}
-                                twoToneColor="#f57800"
-                                onClick={() => {
-                                    setIsModalOpenUpdate(true)
-                                    setDataSelect(record)
-                                }}
-                            />
-
-                            <Popconfirm
-                                placement="bottomRight"
-                                title={"Xoá người dùng"}
-                                description={"Bạn chắc chắn muốn xoá người dùng này"}
-                                okText="Yes"
-                                cancelText="No"
-                                onConfirm={() => {
-                                    handelDelete(record._id);
-                                }}
+                        <Space>
+                            <Access
+                                permission={ALL_PERMISSIONS.USERS.UPDATE}
+                                hideChildren
                             >
-                                <DeleteTwoTone
-                                    style={{ fontSize: '18px', cursor: "pointer" }}
-                                    twoToneColor="#ff4d4f"
+                                <Button
+                                    type="text"
+                                    onClick={() => {
+                                        setIsVisible(true)
+                                        setDataSelected(record)
+                                    }}
+                                    icon={<TbEdit color="" size={20}
+                                        className="text-info"
+                                    />}
                                 />
-                            </Popconfirm>
-                        </div>
+                            </Access>
+                            <Access
+                                permission={ALL_PERMISSIONS.USERS.DELETE}
+                                hideChildren
+                            >
+                                <Button
+                                    type="text"
+                                    onClick={() => Modal.confirm({
+                                        title: "Xác nhận",
+                                        content: "Bạn chắc chắn muốn xoá?",
+                                        onOk: () => handleRemove(record._id)
+                                    })}
+                                    icon={<TbTrash size={20}
+                                        className="text-danger"
+                                    />}
+                                />
+                            </Access>
+                        </Space>
                     </>
                 )
             }
         },
     ];
 
-    const onChange: TableProps<IUDataType>['onChange'] = (pagination, filters, sorter: any, extra) => {
+    const onChange: TableProps<IUser>['onChange'] = (pagination, filters, sorter: any, extra) => {
         if (pagination.current && pagination.current !== current) {
             setCurrent(pagination.current);
         }
@@ -183,70 +196,69 @@ const UserPage = () => {
     }
 
     return (<>
-        <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
-            <div className="row">
-                <div className="col-12 mb-3">
-                    <InputSearch
-                        setSearchFilter={setFilter}
-                    />
-                </div>
-                <div className="col-12">
-                    <Table
-                        title={() => <UserHeaderTable
-                            setFilter={setFilter}
-                            setSortQuery={setSortQuery}
-                            setIsModalOpenCreate={setIsModalOpenCreate}
-                            setIsModalOpenImport={setIsModalOpenImport}
-                            listUser={listUser}
-                        />}
-                        loading={isLoading}
-                        columns={columns}
-                        dataSource={listUser}
-                        onChange={onChange}
-                        rowKey={"_id"}
-                        pagination={{
-                            current: current,
-                            pageSize: pageSize,
-                            total: total,
-                            showSizeChanger: true,
-                            pageSizeOptions: [8, 15, 20, 50],
-                            showTotal: (total, range) => { return <div>{range[0]}-{range[1]} trên {total}rows</div> }
-                        }}
-                        scroll={{
-                            x: 'max-content',
-                            y: 55 * 8
-                        }}
-                    />
+        <Access
+            permission={ALL_PERMISSIONS.USERS.GET}
+        >
+            <div className="container p-4 rounded" style={{ backgroundColor: "white" }}>
+                <div className="row">
+                    <div className="col-12 mb-3">
+                        <InputSearch
+                            setSearchFilter={setFilter}
+                        />
+                    </div>
+                    <div className="col-12">
+                        <Table
+                            title={() => <UserHeaderTable
+                                setFilter={setFilter}
+                                setSortQuery={setSortQuery}
+                                setIsVisible={setIsVisible}
+                                setIsModalOpenImport={setIsModalOpenImport}
+                                listUser={listUser}
+                            />}
+                            loading={isLoading}
+                            columns={columns}
+                            dataSource={listUser}
+                            onChange={onChange}
+                            rowKey={"_id"}
+                            pagination={{
+                                current: current,
+                                pageSize: pageSize,
+                                total: total,
+                                showSizeChanger: true,
+                                pageSizeOptions: [8, 15, 20, 50],
+                                showTotal: (total, range) => { return <div>{range[0]}-{range[1]} trên {total}rows</div> }
+                            }}
+                            scroll={{
+                                x: 'max-content',
+                                y: 55 * 8
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
-        <UserViewDetail
-            isOpenDetail={isOpenDetail}
-            onClose={() => {
-                setDataViewDetail(undefined);
-                setIsOpenDetail(false)
-            }}
-            dataViewDetail={dataViewDetail}
-        />
-        <UserModalCreate
-            isModalOpenCreate={isModalOpenCreate}
-            setIsModalOpenCreate={setIsModalOpenCreate}
-            fetchUser={fetchUser}
-        />
-        <UserModalUpdate
-            isModalOpenUpdate={isModalOpenUpdate}
-            onclose={() => {
-                setDataSelect(undefined)
-                setIsModalOpenUpdate(false)
-            }}
-            fetchUser={fetchUser}
-            dataSelect={dataSelect}
-        />
-        <UserImport
-            setIsModalOpenImport={setIsModalOpenImport}
-            isModalOpenImport={isModalOpenImport}
-            fetchUser={fetchUser}
-        />
+            <UserViewDetail
+                isOpenDetail={isOpenDetail}
+                onClose={() => {
+                    setDataViewDetail(undefined);
+                    setIsOpenDetail(false)
+                }}
+                dataViewDetail={dataViewDetail}
+            />
+            <ModalUser
+                isVisible={isVisible}
+                onClose={() => {
+                    setDataSelected(undefined)
+                    setIsVisible(false)
+                }}
+                fetchUser={fetchUser}
+                dataSelected={dataSelected}
+            />
+            <UserImport
+                setIsModalOpenImport={setIsModalOpenImport}
+                isModalOpenImport={isModalOpenImport}
+                fetchUser={fetchUser}
+            />
+        </Access>
     </>)
 }
 

@@ -126,6 +126,7 @@ const ModalPromotion = (props: IProps) => {
                 loading: isLoading
             }}
             okText={promotion ? "Update" : "Create"}
+            style={{ top: 20 }}
         >
             <Upload
                 accept='image/*'

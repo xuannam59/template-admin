@@ -1,6 +1,8 @@
 import handleAPI from "@/apis/handleAPI";
 import ModalPermission from "@/components/Permission/ModalPermission";
-import TableData from "@/components/Table/TableData"
+import Access from "@/components/Share/Access";
+import TableData from "@/components/Table/TableData";
+import { ALL_PERMISSIONS } from "@/constants/permissions";
 import { Button, message, Modal, notification, Space, TableColumnsType, Tag } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -127,27 +129,37 @@ const PermissionPage = () => {
             render: (permissions: IPermission) => {
                 return (<>
                     <Space>
-                        <Button
-                            type="text"
-                            onClick={() => {
-                                setIsVisible(true)
-                                setDataSelected(permissions)
-                            }}
-                            icon={<TbEdit color="" size={20}
-                                className="text-info"
-                            />}
-                        />
-                        <Button
-                            type="text"
-                            onClick={() => Modal.confirm({
-                                title: "Xác nhận",
-                                content: "Bạn chắc chắn muốn xoá?",
-                                onOk: () => handleRemove(permissions._id)
-                            })}
-                            icon={<TbTrash size={20}
-                                className="text-danger"
-                            />}
-                        />
+                        <Access
+                            permission={ALL_PERMISSIONS.PERMISSIONS.UPDATE}
+                            hideChildren
+                        >
+                            <Button
+                                type="text"
+                                onClick={() => {
+                                    setIsVisible(true)
+                                    setDataSelected(permissions)
+                                }}
+                                icon={<TbEdit color="" size={20}
+                                    className="text-info"
+                                />}
+                            />
+                        </Access>
+                        <Access
+                            permission={ALL_PERMISSIONS.PERMISSIONS.DELETE}
+                            hideChildren
+                        >
+                            <Button
+                                type="text"
+                                onClick={() => Modal.confirm({
+                                    title: "Xác nhận",
+                                    content: "Bạn chắc chắn muốn xoá?",
+                                    onOk: () => handleRemove(permissions._id)
+                                })}
+                                icon={<TbTrash size={20}
+                                    className="text-danger"
+                                />}
+                            />
+                        </Access>
                     </Space>
                 </>)
             }
@@ -172,29 +184,35 @@ const PermissionPage = () => {
 
     return (
         <>
-            <TableData
-                api="permissions"
-                current={current}
-                pageSize={pageSize}
-                total={total}
-                setCurrent={setCurrent}
-                setPageSize={setPageSize}
-                setSortQuery={setSortQuery}
-                setFilterQuery={setFilterQuery}
-                openAddNew={() => { setIsVisible(true) }}
-                columns={columns}
-                dataSource={dataSource}
-                isLoading={isLoading}
-            />
-            <ModalPermission
-                isVisible={isVisible}
-                onClose={() => {
-                    setIsVisible(false);
-                    setDataSelected(undefined);
-                }}
-                loadData={getPermissions}
-                dataSelected={dataSelected}
-            />
+            <Access
+                permission={ALL_PERMISSIONS.PERMISSIONS.GET}
+            >
+                <TableData
+                    api="permissions"
+                    current={current}
+                    pageSize={pageSize}
+                    total={total}
+                    setCurrent={setCurrent}
+                    setPageSize={setPageSize}
+                    setSortQuery={setSortQuery}
+                    setFilterQuery={setFilterQuery}
+                    openAddNew={() => { setIsVisible(true) }}
+                    columns={columns}
+                    dataSource={dataSource}
+                    isLoading={isLoading}
+                    permissionCreate={ALL_PERMISSIONS.PERMISSIONS.CREATE}
+                    permissionDelete={ALL_PERMISSIONS.PERMISSIONS.DELETE}
+                />
+                <ModalPermission
+                    isVisible={isVisible}
+                    onClose={() => {
+                        setIsVisible(false);
+                        setDataSelected(undefined);
+                    }}
+                    loadData={getPermissions}
+                    dataSelected={dataSelected}
+                />
+            </Access>
         </>
     )
 }

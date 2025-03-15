@@ -5,14 +5,14 @@ import { Form, Input, message, Modal, notification, Radio, TreeSelect, Upload, U
 import { useEffect, useState } from 'react'
 
 interface IProps {
-    isModalOpen: boolean
+    isVisible: boolean
     onClose: any;
     selectData: ICategories | undefined;
     fetchCategories: any,
 }
 
-const ToggleCategory = (props: IProps) => {
-    const { isModalOpen, fetchCategories, onClose, selectData } = props
+const ModalCategory = (props: IProps) => {
+    const { isVisible, fetchCategories, onClose, selectData } = props
     const [form] = Form.useForm();
     const [isLoading, setIsLoading] = useState(false);
     const [imageUpload, setImageUpload] = useState<any[]>([]);
@@ -124,7 +124,7 @@ const ToggleCategory = (props: IProps) => {
         <>
             <Modal
                 title={selectData ? "Cập nhật danh mục" : "Tạo mới danh mục"}
-                open={isModalOpen}
+                open={isVisible}
                 onOk={() => form.submit()}
                 onCancel={onCancel}
                 okText={selectData ? "Cập nhật" : "Tạo mới"}
@@ -133,6 +133,7 @@ const ToggleCategory = (props: IProps) => {
                 okButtonProps={{
                     loading: isLoading
                 }}
+                style={{ top: 50 }}
             >
                 <Upload
                     accept='image/*'
@@ -218,4 +219,4 @@ const ToggleCategory = (props: IProps) => {
     )
 }
 
-export default ToggleCategory
+export default ModalCategory

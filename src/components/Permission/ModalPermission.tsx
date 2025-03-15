@@ -59,6 +59,7 @@ const ModalPermission = (props: IProps) => {
                 loading: isLoading
             }}
             okText={dataSelected ? "Cập nhật" : "Tạo mới"}
+            style={{ top: 50 }}
         >
             <Form
                 form={form}

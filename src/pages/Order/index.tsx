@@ -1,7 +1,9 @@
 import handleAPI from "@/apis/handleAPI";
 import OrderDetail from "@/components/Order/OrderDetail";
 import OrderStatistic from "@/components/Order/OrderStatistic";
+import Access from "@/components/Share/Access";
 import TableData from "@/components/Table/TableData";
+import { ALL_PERMISSIONS } from "@/constants/permissions";
 import { Card, DatePicker, notification, Radio, Select, Space, TableColumnsType, Tag, Typography } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -262,103 +264,109 @@ const OrderPage = () => {
 
     return (
         <>
-            <div className="text-end mb-2">
-                <Space>
-                    <Radio.Group
-                        onChange={e => setDateSelect(e.target.value)}
-                        value={dateSelect}
-                    >
-                        <Radio.Button value={"day"}>
-                            Day
-                        </Radio.Button>
-                        <Radio.Button value={"week"}>
-                            Week
-                        </Radio.Button>
-                        <Radio.Button value={"month"}>
-                            Month
-                        </Radio.Button>
-                        <Radio.Button value={"year"}>
-                            Year
-                        </Radio.Button>
-                    </Radio.Group>
-                    <DatePicker.RangePicker
-                        format={"DD/MM/YYYY"}
-                        onChange={val => {
-                            if (val && val.length === 2) {
-                                setDates({
-                                    start: dayjs(val[0]).format(),
-                                    end: dayjs(val[1]).format()
-                                });
-                            } else {
-                                setDateSelect("year");
-                            }
-                        }}
-                    />
-                </Space>
-            </div>
-            <Card className="mb-2">
-                <div className="row">
-                    <OrderStatistic
-                        title="Tổng số"
-                        value={total}
-                        label={`Trong ${daysDifference} ngày`}
-                        color="#0F0F0F"
-                    />
-                    <OrderStatistic
-                        title="Tổng số nhận được "
-                        value={orders.filter(item => item.status === "success").length}
-                        total={orders.reduce((a, b) => {
-                            if (b.status === "success") {
-                                return a + b.totalAmount
-                            }
-                            return a;
-                        }, 0)}
-                        label={`Trong ${daysDifference} ngày`}
-                        desc="Lợi nhuận"
-                        color="#E19133"
-                    />
-                    <OrderStatistic
-                        title="Tổng số trả hàng"
-                        value={orders.filter(item => item.status === "return").length}
-                        label={`Trong ${daysDifference} ngày`}
-                        color="#845EBC"
-                    />
-                    <OrderStatistic
-                        title="Trên đường giao"
-                        value={orders.filter(item => item.status === "shipping").length}
-                        label="Đã đặt"
-                        color="#F36960"
-                    />
+            <Access
+                permission={ALL_PERMISSIONS.ORDERS.GET}
+            >
+                <div className="text-end mb-2">
+                    <Space>
+                        <Radio.Group
+                            onChange={e => setDateSelect(e.target.value)}
+                            value={dateSelect}
+                        >
+                            <Radio.Button value={"day"}>
+                                Day
+                            </Radio.Button>
+                            <Radio.Button value={"week"}>
+                                Week
+                            </Radio.Button>
+                            <Radio.Button value={"month"}>
+                                Month
+                            </Radio.Button>
+                            <Radio.Button value={"year"}>
+                                Year
+                            </Radio.Button>
+                        </Radio.Group>
+                        <DatePicker.RangePicker
+                            format={"DD/MM/YYYY"}
+                            onChange={val => {
+                                if (val && val.length === 2) {
+                                    setDates({
+                                        start: dayjs(val[0]).format(),
+                                        end: dayjs(val[1]).format()
+                                    });
+                                } else {
+                                    setDateSelect("year");
+                                }
+                            }}
+                        />
+                    </Space>
                 </div>
-            </Card>
-            <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
-                <div className="row">
-                    <div className="col">
-                        <TableData
-                            api="orders"
-                            isLoading={isLoading}
-                            columns={columns}
-                            dataSource={orders}
-                            current={current}
-                            setFilterQuery={setFilterQuery}
-                            setSortQuery={setSortQuery}
-                            setCurrent={setCurrent}
-                            setPageSize={setPageSize}
-                            pageSize={pageSize}
-                            total={total}
-                            hiddenBtnAdd
+                <Card className="mb-2">
+                    <div className="row">
+                        <OrderStatistic
+                            title="Tổng số"
+                            value={total}
+                            label={`Trong ${daysDifference} ngày`}
+                            color="#0F0F0F"
+                        />
+                        <OrderStatistic
+                            title="Tổng số nhận được "
+                            value={orders.filter(item => item.status === "success").length}
+                            total={orders.reduce((a, b) => {
+                                if (b.status === "success") {
+                                    return a + b.totalAmount
+                                }
+                                return a;
+                            }, 0)}
+                            label={`Trong ${daysDifference} ngày`}
+                            desc="Lợi nhuận"
+                            color="#E19133"
+                        />
+                        <OrderStatistic
+                            title="Tổng số trả hàng"
+                            value={orders.filter(item => item.status === "return").length}
+                            label={`Trong ${daysDifference} ngày`}
+                            color="#845EBC"
+                        />
+                        <OrderStatistic
+                            title="Trên đường giao"
+                            value={orders.filter(item => item.status === "shipping").length}
+                            label="Đã đặt"
+                            color="#F36960"
                         />
                     </div>
+                </Card>
+                <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
+                    <div className="row">
+                        <div className="col">
+                            <TableData
+                                api="orders"
+                                isLoading={isLoading}
+                                columns={columns}
+                                dataSource={orders}
+                                current={current}
+                                setFilterQuery={setFilterQuery}
+                                setSortQuery={setSortQuery}
+                                setCurrent={setCurrent}
+                                setPageSize={setPageSize}
+                                pageSize={pageSize}
+                                total={total}
+                                hiddenBtnAdd
+                                permissionCreate={ALL_PERMISSIONS.ORDERS.CREATE}
+                                permissionDelete={ALL_PERMISSIONS.ORDERS.DELETE}
+                            />
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <OrderDetail
-                isOpenDetail={isOpenDetail}
-                dataDetail={dataDetail}
-                onClose={() => {
-                    setDataDetail(undefined);
-                    setIsOpenDetail(false)
-                }}
-            />
+                <OrderDetail
+                    isOpenDetail={isOpenDetail}
+                    dataDetail={dataDetail}
+                    onClose={() => {
+                        setDataDetail(undefined);
+                        setIsOpenDetail(false)
+                    }}
+                />
+            </Access>
         </>
     )
 }

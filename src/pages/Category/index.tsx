@@ -1,11 +1,13 @@
 import handleAPI from '@/apis/handleAPI';
-import ToggleCategory from '@/components/Category/ToggleCategory';
+import ModalCategory from '@/components/Category/ModalCategory';
+import Access from '@/components/Share/Access';
 import TableData from '@/components/Table/TableData';
+import { ALL_PERMISSIONS } from '@/constants/permissions';
 import { tree } from '@/helpers/createTree';
-import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons';
-import { Image, message, notification, Popconfirm, TableColumnsType, Tag } from 'antd'
+import { Button, Image, message, Modal, notification, Space, TableColumnsType, Tag } from 'antd';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
+import { TbEdit, TbTrash } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
 
 export interface ICategories {
@@ -30,8 +32,8 @@ const CategoryPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [listCategory, setListCategory] = useState<ICategories[]>([]);
     const [filterQuery, setFilterQuery] = useState("");
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectData, setSelectData] = useState<ICategories | undefined>(undefined);
+    const [isVisible, setIsVisible] = useState(false);
+    const [dataSeleted, setDataSelected] = useState<ICategories | undefined>(undefined);
     useEffect(() => {
         fetchCategories();
     }, [filterQuery]);
@@ -128,42 +130,49 @@ const CategoryPage = () => {
         {
             title: 'Action',
             fixed: "right",
-            render: (item: ICategories) => {
+            render: (category: ICategories) => {
                 return (
                     <>
-                        <div className="d-flex gap-3">
-                            <EditTwoTone
-                                style={{ fontSize: '18px', cursor: "pointer" }}
-                                twoToneColor="#f57800"
-                                onClick={() => {
-                                    setSelectData(item);
-                                    setIsModalOpen(true)
-                                }}
-                            />
-
-                            <Popconfirm
-                                placement="bottomRight"
-                                title={"Xoá người danh mục"}
-                                description={"Bạn chắc chắn muốn xoá danh mục này"}
-                                okText="Yes"
-                                cancelText="No"
-                                onConfirm={() => {
-                                    handelDelete(item._id);
-                                }}
+                        <Space>
+                            <Access
+                                permission={ALL_PERMISSIONS.CATEGORIES.UPDATE}
+                                hideChildren
                             >
-                                <DeleteTwoTone
-                                    style={{ fontSize: '18px', cursor: "pointer" }}
-                                    twoToneColor="#ff4d4f"
+                                <Button
+                                    type="text"
+                                    onClick={() => {
+                                        setIsVisible(true)
+                                        setDataSelected(category)
+                                    }}
+                                    icon={<TbEdit color="" size={20}
+                                        className="text-info"
+                                    />}
                                 />
-                            </Popconfirm>
-                        </div>
+                            </Access>
+                            <Access
+                                permission={ALL_PERMISSIONS.CATEGORIES.DELETE}
+                                hideChildren
+                            >
+                                <Button
+                                    type="text"
+                                    onClick={() => Modal.confirm({
+                                        title: "Xác nhận",
+                                        content: "Bạn chắc chắn muốn xoá?",
+                                        onOk: () => handleRemove(category._id)
+                                    })}
+                                    icon={<TbTrash size={20}
+                                        className="text-danger"
+                                    />}
+                                />
+                            </Access>
+                        </Space>
                     </>
                 )
             }
         },
     ]
 
-    const handelDelete = async (id: string) => {
+    const handleRemove = async (id: string) => {
         setIsLoading(true)
         const res = await handleAPI(`/categories/${id}`, "", "delete");
         if (res && res.data) {
@@ -180,33 +189,39 @@ const CategoryPage = () => {
 
     return (
         <>
-            <div className="container  p-4 rounded" style={{ backgroundColor: "white" }}>
-                <div className="row">
-                    <div className="col">
-                        <TableData
-                            api='categories'
-                            columns={columns}
-                            isLoading={isLoading}
-                            dataSource={listCategory}
-                            setCurrent={() => 1}
-                            setPageSize={() => 1}
-                            setFilterQuery={setFilterQuery}
-                            setSortQuery={() => { }}
-                            openAddNew={() => { setIsModalOpen(true) }}
-                            checkStrictly
-                        />
+            <Access
+                permission={ALL_PERMISSIONS.CATEGORIES.GET}
+            >
+                <div className="container  p-4 rounded" style={{ backgroundColor: "white" }}>
+                    <div className="row">
+                        <div className="col">
+                            <TableData
+                                api='categories'
+                                columns={columns}
+                                isLoading={isLoading}
+                                dataSource={listCategory}
+                                setCurrent={() => 1}
+                                setPageSize={() => 1}
+                                setFilterQuery={setFilterQuery}
+                                setSortQuery={() => { }}
+                                openAddNew={() => { setIsVisible(true) }}
+                                checkStrictly
+                                permissionCreate={ALL_PERMISSIONS.CATEGORIES.CREATE}
+                                permissionDelete={ALL_PERMISSIONS.CATEGORIES.DELETE}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-            <ToggleCategory
-                isModalOpen={isModalOpen}
-                onClose={() => {
-                    setIsModalOpen(false);
-                    setSelectData(undefined)
-                }}
-                selectData={selectData}
-                fetchCategories={fetchCategories}
-            />
+                <ModalCategory
+                    isVisible={isVisible}
+                    onClose={() => {
+                        setIsVisible(false);
+                        setDataSelected(undefined)
+                    }}
+                    selectData={dataSeleted}
+                    fetchCategories={fetchCategories}
+                />
+            </Access>
         </>
     )
 }

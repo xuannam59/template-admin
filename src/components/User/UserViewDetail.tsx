@@ -1,10 +1,10 @@
-import { IUDataType } from "@/pages/User";
+import { IUser } from "@/pages/User";
 import { Badge, Descriptions, Drawer } from "antd";
 import dayjs from "dayjs";
 
 interface IProps {
     isOpenDetail: boolean,
-    dataViewDetail: IUDataType | undefined,
+    dataViewDetail: IUser | undefined,
     onClose: any
 }
 
@@ -32,7 +32,7 @@ const UserViewDetail = (props: IProps) => {
                         {dataViewDetail?.phone}
                     </Descriptions.Item>
                     <Descriptions.Item label="Vai trò" span={2}>
-                        <Badge status="processing" text={dataViewDetail?.role} />
+                        <Badge status="processing" text={dataViewDetail?.role.title} />
                     </Descriptions.Item>
                     <Descriptions.Item label="CreatedAt">
                         {dayjs(dataViewDetail?.createdAt).format("DD/MM/YYYY HH:mm:ss")}

@@ -1,8 +1,11 @@
 import handleAPI from "@/apis/handleAPI";
 import ModalPromotion from "@/components/Promotions/ModalPromotion";
+import Access from "@/components/Share/Access";
 import TableData from "@/components/Table/TableData";
+import { ALL_PERMISSIONS } from "@/constants/permissions";
 import { VND } from "@/helpers/handleCurrency";
-import { Avatar, Button, message, Modal, notification, Space, Tag } from "antd";
+import { Avatar, Button, message, Modal, notification, Space, Tag, Typography } from "antd";
+import { icons } from "antd/es/image/PreviewGroup";
 import { ColumnProps } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
@@ -31,13 +34,12 @@ export interface IPromotions {
     slug: string
 }
 
-const { confirm } = Modal
-
+const { Text } = Typography
 const Promotions = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [dataSource, setDataSource] = useState<IPromotions[]>([]);
-    const [selectedPromotion, setSelectedPromotion] = useState<IPromotions>();
+    const [dataSelected, setDataSelected] = useState<IPromotions>();
     const [current, setCurrent] = useState(1);
     const [pageSize, setPageSize] = useState(8);
     const [total, setTotal] = useState(0);
@@ -50,7 +52,10 @@ const Promotions = () => {
 
     const getPromotions = async () => {
         setIsLoading(true);
-        let query = `current=${current}&pageSize=${pageSize}${filterQuery ? `&slug=/${filterQuery}/i` : ""}&sort=-createdAt`;
+        let query = `current=${current}&pageSize=${pageSize}&sort=${sortQuery}`;
+        if (filterQuery) {
+            query += `&slug=/${filterQuery}/i`
+        }
         try {
             const res = await handleAPI(`/promotions?${query}`);
             if (res.data && res) {
@@ -108,7 +113,7 @@ const Promotions = () => {
             dataIndex: 'code',
             render: (code: string) => {
                 return <>
-                    <Tag>{code}</Tag>
+                    <Text copyable code >{code}</Text>
                 </>
             }
         },
@@ -161,31 +166,41 @@ const Promotions = () => {
         {
             fixed: "right",
             title: "Action",
-            render: (item: IPromotions) => {
+            render: (promotion: IPromotions) => {
                 return (
                     <>
                         <Space>
-                            <Button
-                                type="text"
-                                onClick={() => {
-                                    setIsVisible(true)
-                                    setSelectedPromotion(item)
-                                }}
-                                icon={<TbEdit color="" size={20}
-                                    className="text-info"
-                                />}
-                            />
-                            <Button
-                                type="text"
-                                onClick={() => confirm({
-                                    title: "Confirm",
-                                    content: "Are you sure you want to remove this promotion?",
-                                    onOk: () => handleRemove(item._id)
-                                })}
-                                icon={<TbTrash size={20}
-                                    className="text-danger"
-                                />}
-                            />
+                            <Access
+                                permission={ALL_PERMISSIONS.PROMOTIONS.UPDATE}
+                                hideChildren
+                            >
+                                <Button
+                                    type="text"
+                                    onClick={() => {
+                                        setIsVisible(true)
+                                        setDataSelected(promotion)
+                                    }}
+                                    icon={<TbEdit color="" size={20}
+                                        className="text-info"
+                                    />}
+                                />
+                            </Access>
+                            <Access
+                                permission={ALL_PERMISSIONS.PROMOTIONS.DELETE}
+                                hideChildren
+                            >
+                                <Button
+                                    type="text"
+                                    onClick={() => Modal.confirm({
+                                        title: "Xác nhận",
+                                        content: "Bạn chắc chắn muốn xoá?",
+                                        onOk: () => handleRemove(promotion._id)
+                                    })}
+                                    icon={<TbTrash size={20}
+                                        className="text-danger"
+                                    />}
+                                />
+                            </Access>
                         </Space>
                     </>
                 )
@@ -197,37 +212,43 @@ const Promotions = () => {
 
     return (
         <>
-            <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
-                <div className="row">
-                    <div className="col">
-                        <TableData
-                            api="promotions"
-                            current={current}
-                            pageSize={pageSize}
-                            total={total}
-                            setSortQuery={setSortQuery}
-                            setCurrent={setCurrent}
-                            setPageSize={setPageSize}
-                            setFilterQuery={setFilterQuery}
-                            openAddNew={() => { setIsVisible(true) }}
-                            columns={columns}
-                            dataSource={dataSource}
-                            isLoading={isLoading}
-                        />
+            <Access
+                permission={ALL_PERMISSIONS.PROMOTIONS.GET}
+            >
+                <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
+                    <div className="row">
+                        <div className="col">
+                            <TableData
+                                api="promotions"
+                                current={current}
+                                pageSize={pageSize}
+                                total={total}
+                                setSortQuery={setSortQuery}
+                                setCurrent={setCurrent}
+                                setPageSize={setPageSize}
+                                setFilterQuery={setFilterQuery}
+                                openAddNew={() => { setIsVisible(true) }}
+                                columns={columns}
+                                dataSource={dataSource}
+                                isLoading={isLoading}
+                                permissionCreate={ALL_PERMISSIONS.PROMOTIONS.CREATE}
+                                permissionDelete={ALL_PERMISSIONS.PROMOTIONS.DELETE}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
-            <ModalPromotion
-                isVisible={isVisible}
-                onClose={() => {
-                    setIsVisible(false);
-                    setSelectedPromotion(undefined);
-                }}
-                loadData={() => {
-                    getPromotions()
-                }}
-                promotion={selectedPromotion}
-            />
+                <ModalPromotion
+                    isVisible={isVisible}
+                    onClose={() => {
+                        setIsVisible(false);
+                        setDataSelected(undefined);
+                    }}
+                    loadData={() => {
+                        getPromotions()
+                    }}
+                    promotion={dataSelected}
+                />
+            </Access>
         </>
     )
 }

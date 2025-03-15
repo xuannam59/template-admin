@@ -9,10 +9,10 @@ export interface authSate {
         name: string;
         role: {
             _id: string;
-            name: string;
+            title: string;
         };
         avatar: string;
-        permission: {
+        permissions: {
             _id: string;
             method: string;
             module: string;
@@ -30,10 +30,10 @@ const initialState: authSate = {
         name: "",
         role: {
             _id: "",
-            name: ""
+            title: ""
         },
         avatar: "",
-        permission: []
+        permissions: []
     }
 }
 
@@ -61,10 +61,10 @@ const authSlide = createSlice({
                 name: "",
                 role: {
                     _id: "",
-                    name: ""
+                    title: ""
                 },
                 avatar: "",
-                permission: []
+                permissions: []
             };
         }
     }

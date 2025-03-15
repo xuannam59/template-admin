@@ -1,5 +1,5 @@
 import { downloadExcel } from "@/helpers/exportExcel";
-import { IUDataType } from "@/pages/User";
+import { IUser } from "@/pages/User";
 import { CloudUploadOutlined, ExportOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 import { Button, notification, Typography } from "antd";
 import dayjs from "dayjs";
@@ -8,13 +8,13 @@ import dayjs from "dayjs";
 interface IProps {
     setFilter: React.Dispatch<React.SetStateAction<string>>;
     setSortQuery: React.Dispatch<React.SetStateAction<string>>;
-    setIsModalOpenCreate: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
     setIsModalOpenImport: React.Dispatch<React.SetStateAction<boolean>>;
-    listUser: IUDataType[]
+    listUser: IUser[]
 }
 
 const UserHeaderTable = (props: IProps) => {
-    const { setIsModalOpenCreate, setIsModalOpenImport, listUser } = props
+    const { setIsVisible, setIsModalOpenImport, listUser } = props
     const exportData = () => {
         const data = listUser.map((item) => {
             return {
@@ -58,7 +58,7 @@ const UserHeaderTable = (props: IProps) => {
                     <Button
                         icon={<PlusOutlined />}
                         type="primary"
-                        onClick={() => setIsModalOpenCreate(true)}
+                        onClick={() => setIsVisible(true)}
                     >Thêm mới</Button>
                     <Button onClick={() => {
                         props.setFilter("")

@@ -6,7 +6,7 @@ import NotPermitted from "./NotPremissted";
 const RoleBaseRoute = (props: any) => {
     const user = useAppSelector(state => state.auth.user);
     const userRole = user.role;
-    if (userRole.name === "ADMIN") {
+    if (userRole.title !== "USER") {
         return <>{props.children}</>
     } else {
         return (<NotPermitted />)

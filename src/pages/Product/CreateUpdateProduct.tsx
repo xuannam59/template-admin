@@ -1,14 +1,16 @@
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { Button, Card, ColorPicker, Form, Input, InputNumber, message, notification, Radio, Select, Space, TreeSelect, Typography, Upload } from 'antd'
-import { useEffect, useState, } from 'react'
-import { v4 as uuidv4 } from 'uuid';
 import handleAPI, { handleUploadFileAPI } from '@/apis/handleAPI';
-import { useNavigate, useParams } from 'react-router-dom';
+import Access from '@/components/Share/Access';
+import { computerConfiguration } from '@/constants/appInfos';
+import { ALL_PERMISSIONS } from '@/constants/permissions';
 import { tree } from '@/helpers/createTree';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Card, ColorPicker, Form, Input, InputNumber, message, notification, Radio, Select, Space, TreeSelect, Typography, Upload } from 'antd';
+import type { UploadChangeParam, UploadFile } from 'antd/es/upload/interface';
+import { useEffect, useState, } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import type { UploadFile, UploadChangeParam } from 'antd/es/upload/interface';
-import { computerConfiguration } from '@/constants/appInfos';
+import { useNavigate, useParams } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 import { IProducts } from '.';
 
 const { Title } = Typography;
@@ -199,194 +201,55 @@ const CreateUpdateProduct = () => {
 
     return (
         <>
-            <div className="container p-4  rounded" style={{ backgroundColor: "white" }}>
-                <Title level={4}>{`${productDetail ? "Cập nhập" : "Tạo sản"} phẩm!`}</Title>
-                <Form
-                    form={form}
-                    layout='vertical'
-                    onFinish={onFinish}
-                    disabled={loading}
-                >
-                    <div className="row">
-                        <div className="col-8">
-                            <div className="row">
-                                <div className="col-4">
-                                    <Form.Item
-                                        label="Thumbnail"
-                                    >
-                                        <Upload
-                                            fileList={thumbnail}
-                                            accept='image/*'
-                                            listType='picture-card'
-                                            onChange={handleChange(setThumbnail)}
+            <Access
+                permission={ALL_PERMISSIONS.PRODUCTS.CREATE}
+            >
+                <div className="container p-4  rounded" style={{ backgroundColor: "white" }}>
+                    <Title level={4}>{`${productDetail ? "Cập nhập" : "Tạo sản"} phẩm!`}</Title>
+                    <Form
+                        form={form}
+                        layout='vertical'
+                        onFinish={onFinish}
+                        disabled={loading}
+                    >
+                        <div className="row">
+                            <div className="col-8">
+                                <div className="row">
+                                    <div className="col-4">
+                                        <Form.Item
+                                            label="Thumbnail"
                                         >
-                                            {thumbnail.length < 1 &&
-                                                "Upload"
-                                            }
-                                        </Upload>
-                                    </Form.Item>
+                                            <Upload
+                                                fileList={thumbnail}
+                                                accept='image/*'
+                                                listType='picture-card'
+                                                onChange={handleChange(setThumbnail)}
+                                            >
+                                                {thumbnail.length < 1 &&
+                                                    "Upload"
+                                                }
+                                            </Upload>
+                                        </Form.Item>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Item
+                                            label="Hình ảnh"
+                                        >
+                                            <Upload
+                                                multiple
+                                                fileList={fileList}
+                                                accept='image/*'
+                                                listType='picture-card'
+                                                onChange={handleChange(setFileList)}>
+                                                Upload
+                                            </Upload>
+                                        </Form.Item>
+                                    </div>
                                 </div>
-                                <div className="col">
-                                    <Form.Item
-                                        label="Hình ảnh"
-                                    >
-                                        <Upload
-                                            multiple
-                                            fileList={fileList}
-                                            accept='image/*'
-                                            listType='picture-card'
-                                            onChange={handleChange(setFileList)}>
-                                            Upload
-                                        </Upload>
-                                    </Form.Item>
-                                </div>
-                            </div>
 
-                            <Form.Item
-                                label="Tiêu đề"
-                                name="title"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: "Vui lòng không để trống"
-                                    }
-                                ]}
-                            >
-                                <Input placeholder='Tiêu đề' />
-                            </Form.Item>
-                            <div className="row">
-                                <div className="col">
-                                    <Form.Item
-                                        label="Chip"
-                                        name="chip"
-                                    >
-                                        <Select options={configurationOptions.chip} placeholder='Chip' />
-                                    </Form.Item>
-                                </div>
-                                <div className="col">
-                                    <Form.Item
-                                        label="RAM"
-                                        name="ram"
-                                    >
-                                        <Select options={configurationOptions.ram} placeholder='RAM' />
-                                    </Form.Item>
-                                </div>
-                                <div className="col">
-                                    <Form.Item
-                                        label="SSD"
-                                        name="ssd"
-                                    >
-                                        <Select options={configurationOptions.ssd} placeholder='SSD' />
-                                    </Form.Item>
-                                </div>
-                                <div className="col">
-                                    <Form.Item
-                                        label="GPU"
-                                        name="gpu"
-                                    >
-                                        <Input placeholder='GPU' />
-                                    </Form.Item>
-                                </div>
-                            </div>
-
-                            <div className="row">
-                                <div className="col-5">
-                                    <Form.Item
-                                        label="Giá nhập"
-                                        name="cost"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng không để trống"
-                                            }
-                                        ]}
-                                    >
-                                        <InputNumber
-                                            placeholder='Giá nhập'
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                            addonAfter="VND"
-                                        />
-                                    </Form.Item>
-                                </div>
-                                <div className="col-5">
-                                    <Form.Item
-                                        label="Giá"
-                                        name="price"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng không để trống"
-                                            }
-                                        ]}
-                                    >
-                                        <InputNumber
-                                            placeholder='Giá'
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                            formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                            addonAfter="VND"
-                                        />
-                                    </Form.Item>
-                                </div>
-                                <div className="col-2">
-                                    <Form.Item
-                                        label="% giảm giá"
-                                        name="discountPercentage"
-                                        rules={[
-                                            {
-                                                required: true,
-                                                message: "Vui lòng không để trống"
-                                            }
-                                        ]}
-                                    >
-                                        <InputNumber
-                                            placeholder='Phần trăm giảm giá'
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                        />
-                                    </Form.Item>
-                                </div>
-                            </div>
-                            <Card
-                                title="Miêu tả"
-                                bordered={false}
-                                size="small"
-                                style={{ marginBottom: 20 }}
-                            >
-                                <ReactQuill
-                                    theme="snow"
-                                    value={description}
-                                    onChange={setDescription}
-                                />
-                            </Card>
-
-                        </div>
-                        <div className="col-4">
-                            <Card className='mt-4' size='small'>
-                                <Space>
-                                    <Button
-                                        onClick={() => {
-                                            navigate("/products");
-                                            form.resetFields();
-                                        }}
-                                        size='middle'>Huỷ
-                                    </Button>
-
-                                    <Button
-                                        onClick={() => form.submit()}
-                                        type='primary'
-                                        size='middle'
-                                        loading={loading}
-                                    >{productDetail ? "Cập nhập" : "Tạo mới"}
-                                    </Button>
-                                </Space>
-                            </Card>
-                            <Card className='mt-3' title={"Danh mục sản phẩm"}>
                                 <Form.Item
-                                    name="categoryId"
-                                    className='mb-0'
+                                    label="Tiêu đề"
+                                    name="title"
                                     rules={[
                                         {
                                             required: true,
@@ -394,81 +257,224 @@ const CreateUpdateProduct = () => {
                                         }
                                     ]}
                                 >
-                                    <TreeSelect
-                                        placeholder="Lữa chọn danh mục"
-                                        treeData={listCategory}
+                                    <Input placeholder='Tiêu đề' />
+                                </Form.Item>
+                                <div className="row">
+                                    <div className="col">
+                                        <Form.Item
+                                            label="Chip"
+                                            name="chip"
+                                        >
+                                            <Select options={configurationOptions.chip} placeholder='Chip' />
+                                        </Form.Item>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Item
+                                            label="RAM"
+                                            name="ram"
+                                        >
+                                            <Select options={configurationOptions.ram} placeholder='RAM' />
+                                        </Form.Item>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Item
+                                            label="SSD"
+                                            name="ssd"
+                                        >
+                                            <Select options={configurationOptions.ssd} placeholder='SSD' />
+                                        </Form.Item>
+                                    </div>
+                                    <div className="col">
+                                        <Form.Item
+                                            label="GPU"
+                                            name="gpu"
+                                        >
+                                            <Input placeholder='GPU' />
+                                        </Form.Item>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="col-5">
+                                        <Form.Item
+                                            label="Giá nhập"
+                                            name="cost"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng không để trống"
+                                                }
+                                            ]}
+                                        >
+                                            <InputNumber
+                                                placeholder='Giá nhập'
+                                                min={0}
+                                                style={{ width: '100%' }}
+                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                addonAfter="VND"
+                                            />
+                                        </Form.Item>
+                                    </div>
+                                    <div className="col-5">
+                                        <Form.Item
+                                            label="Giá"
+                                            name="price"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng không để trống"
+                                                }
+                                            ]}
+                                        >
+                                            <InputNumber
+                                                placeholder='Giá'
+                                                min={0}
+                                                style={{ width: '100%' }}
+                                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                addonAfter="VND"
+                                            />
+                                        </Form.Item>
+                                    </div>
+                                    <div className="col-2">
+                                        <Form.Item
+                                            label="% giảm giá"
+                                            name="discountPercentage"
+                                            rules={[
+                                                {
+                                                    required: true,
+                                                    message: "Vui lòng không để trống"
+                                                }
+                                            ]}
+                                        >
+                                            <InputNumber
+                                                placeholder='Phần trăm giảm giá'
+                                                min={0}
+                                                style={{ width: '100%' }}
+                                            />
+                                        </Form.Item>
+                                    </div>
+                                </div>
+                                <Card
+                                    title="Miêu tả"
+                                    bordered={false}
+                                    size="small"
+                                    style={{ marginBottom: 20 }}
+                                >
+                                    <ReactQuill
+                                        theme="snow"
+                                        value={description}
+                                        onChange={setDescription}
                                     />
-                                </Form.Item>
-                            </Card>
+                                </Card>
 
-                            <Card className='mt-3' title={"Trạng thái"}>
-                                <Form.Item
-                                    name="status"
-                                    className='mb-0'
-                                    rules={[
-                                        {
-                                            required: true,
-                                            message: "Vui lòng không để trống"
-                                        }
-                                    ]}
-                                >
-                                    <Radio.Group>
-                                        <Radio value={"active"}>Hoạt động</Radio>
-                                        <Radio value={"inactive"}>Dừng hoạt động</Radio>
-                                    </Radio.Group>
-                                </Form.Item>
-                            </Card>
-                            <Card className='mt-3' title="Phiên bản">
-                                <Form.List name="versions" initialValue={[{ color: "", quantity: 0 }]}>
-                                    {(fields, { add, remove }) => (
-                                        <>
-                                            {fields.map(({ key, name, ...restField }) => (
-                                                <div key={key} className='row align-items-center'>
-                                                    <div className="col">
-                                                        <Form.Item
-                                                            {...restField}
-                                                            label="Màu"
-                                                            name={[name, "color"]}
-                                                            // style={{ marginBottom: 0 }}
-                                                            rules={[{ required: true, message: "Please select a color" }]}
-                                                            getValueFromEvent={(color) => `#${color.toHex()}`
-                                                            }
-                                                        >
-                                                            <ColorPicker />
-                                                        </Form.Item>
-                                                    </div>
-                                                    <div className="col">
+                            </div>
+                            <div className="col-4">
+                                <Card className='mt-4' size='small'>
+                                    <Space>
+                                        <Button
+                                            onClick={() => {
+                                                navigate("/products");
+                                                form.resetFields();
+                                            }}
+                                            size='middle'>Huỷ
+                                        </Button>
 
-                                                        <Form.Item
-                                                            {...restField}
-                                                            name={[name, "quantity"]}
-                                                            label="Số lượng"
-                                                            rules={[{
-                                                                required: true,
-                                                                message: "Please input your quantity"
-                                                            }]}
-                                                        >
-                                                            <InputNumber min={0} />
-                                                        </Form.Item>
+                                        <Button
+                                            onClick={() => form.submit()}
+                                            type='primary'
+                                            size='middle'
+                                            loading={loading}
+                                        >{productDetail ? "Cập nhập" : "Tạo mới"}
+                                        </Button>
+                                    </Space>
+                                </Card>
+                                <Card className='mt-3' title={"Danh mục sản phẩm"}>
+                                    <Form.Item
+                                        name="categoryId"
+                                        className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Vui lòng không để trống"
+                                            }
+                                        ]}
+                                    >
+                                        <TreeSelect
+                                            placeholder="Lữa chọn danh mục"
+                                            treeData={listCategory}
+                                        />
+                                    </Form.Item>
+                                </Card>
+
+                                <Card className='mt-3' title={"Trạng thái"}>
+                                    <Form.Item
+                                        name="status"
+                                        className='mb-0'
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: "Vui lòng không để trống"
+                                            }
+                                        ]}
+                                    >
+                                        <Radio.Group>
+                                            <Radio value={"active"}>Hoạt động</Radio>
+                                            <Radio value={"inactive"}>Dừng hoạt động</Radio>
+                                        </Radio.Group>
+                                    </Form.Item>
+                                </Card>
+                                <Card className='mt-3' title="Phiên bản">
+                                    <Form.List name="versions" initialValue={[{ color: "", quantity: 0 }]}>
+                                        {(fields, { add, remove }) => (
+                                            <>
+                                                {fields.map(({ key, name, ...restField }) => (
+                                                    <div key={key} className='row align-items-center'>
+                                                        <div className="col">
+                                                            <Form.Item
+                                                                {...restField}
+                                                                label="Màu"
+                                                                name={[name, "color"]}
+                                                                // style={{ marginBottom: 0 }}
+                                                                rules={[{ required: true, message: "Please select a color" }]}
+                                                                getValueFromEvent={(color) => `#${color.toHex()}`
+                                                                }
+                                                            >
+                                                                <ColorPicker />
+                                                            </Form.Item>
+                                                        </div>
+                                                        <div className="col">
+
+                                                            <Form.Item
+                                                                {...restField}
+                                                                name={[name, "quantity"]}
+                                                                label="Số lượng"
+                                                                rules={[{
+                                                                    required: true,
+                                                                    message: "Please input your quantity"
+                                                                }]}
+                                                            >
+                                                                <InputNumber min={0} />
+                                                            </Form.Item>
+                                                        </div>
+                                                        <div className="col text-center">
+                                                            <MinusCircleOutlined onClick={() => remove(name)} />
+                                                        </div>
                                                     </div>
-                                                    <div className="col text-center">
-                                                        <MinusCircleOutlined onClick={() => remove(name)} />
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <Form.Item style={{ marginBottom: 0 }}>
-                                                <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
-                                                    Thêm phiên bản
-                                                </Button>
-                                            </Form.Item>
-                                        </>
-                                    )}
-                                </Form.List>
-                            </Card>
+                                                ))}
+                                                <Form.Item style={{ marginBottom: 0 }}>
+                                                    <Button type="dashed" onClick={() => add()} icon={<PlusOutlined />} block>
+                                                        Thêm phiên bản
+                                                    </Button>
+                                                </Form.Item>
+                                            </>
+                                        )}
+                                    </Form.List>
+                                </Card>
+                            </div>
                         </div>
-                    </div>
-                </Form >
-            </div >
+                    </Form >
+                </div >
+            </Access>
         </>
     )
 }

@@ -15,3 +15,7 @@ a {
     text-overflow: ellipsis;
     width: 100%;
 }
+
+.ant-collapse-header {
+    align-items: center !important;
+}

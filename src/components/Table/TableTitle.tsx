@@ -5,6 +5,7 @@ import { ExportOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons"
 import { Button, Input, message, notification, Typography } from "antd";
 import React, { useState } from "react";
 import { TbSearch } from "react-icons/tb";
+import Access from "../Share/Access";
 
 
 interface IProps {
@@ -16,7 +17,17 @@ interface IProps {
     hiddenBtnAdd?: boolean;
     selectedIds: React.Key[];
     setSelectedIds: any;
-    api: string
+    api: string;
+    permissionCreate: {
+        method: string;
+        apiPath: string;
+        module: string;
+    };
+    permissionDelete: {
+        method: string;
+        apiPath: string;
+        module: string;
+    };
 }
 
 const { Text } = Typography
@@ -25,7 +36,9 @@ const TableTitle = (props: IProps) => {
     let timeoutId: ReturnType<typeof setTimeout>;
     const { setFilterQuery, setSortQuery, dataExport,
         openAddNew, hiddenBtnAdd, selectedIds,
-        setSelectedIds, setCurrent, api } = props
+        setSelectedIds, setCurrent, api,
+        permissionCreate, permissionDelete
+    } = props
 
     const [isLoading, setIsLoading] = useState(false);
     const exportData = () => {
@@ -86,12 +99,17 @@ const TableTitle = (props: IProps) => {
                 <div className="col-3">
                     {selectedIds.length > 0 &&
                         <>
-                            <Button
-                                loading={isLoading}
-                                onClick={DeleteSelectedItems}
-                                type="primary"
-                                danger>Delete</Button>
-                            <Text type="secondary" className="ms-2">{selectedIds.length} items selected</Text>
+                            <Access
+                                permission={permissionDelete}
+                                hideChildren
+                            >
+                                <Button
+                                    loading={isLoading}
+                                    onClick={DeleteSelectedItems}
+                                    type="primary"
+                                    danger>Delete</Button>
+                                <Text type="secondary" className="ms-2">{selectedIds.length} items selected</Text>
+                            </Access>
                         </>
                     }
                 </div>
@@ -115,13 +133,18 @@ const TableTitle = (props: IProps) => {
                         >Export
                         </Button>
                         {hiddenBtnAdd ??
-                            <Button
-                                icon={<PlusOutlined />}
-                                type="primary"
-                                onClick={openAddNew}
-                                className="me-2"
-                            >Thêm mới
-                            </Button>
+                            <Access
+                                permission={permissionCreate}
+                                hideChildren
+                            >
+                                <Button
+                                    icon={<PlusOutlined />}
+                                    type="primary"
+                                    onClick={openAddNew}
+                                    className="me-2"
+                                >Thêm mới
+                                </Button>
+                            </Access>
                         }
                         <Button onClick={() => {
                             setFilterQuery("")

@@ -22,6 +22,16 @@ interface IProps {
     hiddenBtnAdd?: boolean
     openAddNew?: () => void;
     checkStrictly?: boolean; // chọn các phần tử con khi chọn phần tử cha
+    permissionCreate: {
+        method: string;
+        apiPath: string;
+        module: string;
+    };
+    permissionDelete: {
+        method: string;
+        apiPath: string;
+        module: string;
+    };
 }
 
 
@@ -30,7 +40,9 @@ const TableData = (props: IProps) => {
         columns, isLoading, dataSource,
         setFilterQuery, setSortQuery,
         dataExport, openAddNew, scrollY,
-        hiddenBtnAdd, checkStrictly, setCurrent, setPageSize, api }
+        hiddenBtnAdd, checkStrictly, setCurrent, setPageSize, api,
+        permissionCreate, permissionDelete
+    }
         = props
     const [selectedIds, setSelectedIds] = useState<React.Key[]>([]);
 
@@ -72,6 +84,8 @@ const TableData = (props: IProps) => {
                 hiddenBtnAdd={hiddenBtnAdd}
                 selectedIds={selectedIds}
                 setSelectedIds={setSelectedIds}
+                permissionCreate={permissionCreate}
+                permissionDelete={permissionDelete}
             />}
             loading={isLoading}
             columns={columns}

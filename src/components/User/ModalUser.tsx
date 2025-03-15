@@ -1,22 +1,37 @@
 import handleAPI from "@/apis/handleAPI"
-import { Divider, Form, Input, message, Modal, notification, Select } from "antd"
+import { IUser } from "@/pages/User"
+import { UserOutlined } from "@ant-design/icons"
+import { Avatar, Divider, Form, Input, message, Modal, notification, Select } from "antd"
 import { useEffect, useState } from "react"
 
 interface IProps {
-    isModalOpenCreate: boolean
-    setIsModalOpenCreate: React.Dispatch<React.SetStateAction<boolean>>
+    isVisible: boolean
+    onClose: () => void;
     fetchUser: any
+    dataSelected?: IUser
 }
 
-const UserModalCreate = (props: IProps) => {
-    const { isModalOpenCreate, setIsModalOpenCreate, fetchUser } = props
+const ModalUser = (props: IProps) => {
+    const { isVisible, onClose, fetchUser, dataSelected } = props
     const [isLoading, setIsLoading] = useState(false);
     const [roles, setRoles] = useState();
     const [form] = Form.useForm()
-
+    console.log(dataSelected);
     useEffect(() => {
         getData()
     }, []);
+
+    useEffect(() => {
+        if (dataSelected) {
+            const data = {
+                name: dataSelected.name,
+                email: dataSelected.email,
+                role: dataSelected?.role?._id,
+                phone: dataSelected.phone
+            };
+            form.setFieldsValue(data)
+        }
+    }, [dataSelected]);
 
     const getData = async () => {
         const api = `/roles?current=1&pageSize=1000`
@@ -25,7 +40,7 @@ const UserModalCreate = (props: IProps) => {
             if (res && res.data) {
                 const data = res.data.result.map((item: any) => {
                     return {
-                        label: item.name,
+                        label: item.title,
                         value: item._id,
                     }
                 })
@@ -37,20 +52,20 @@ const UserModalCreate = (props: IProps) => {
     }
 
     const onFinish = async (value: any) => {
+        const { name, email, password, role, phone } = value
         setIsLoading(true)
-        const api = '/users'
+        const api = `/users/${dataSelected ? dataSelected._id : ""}`;
         const data = {
-            ...value,
-            age: 0,
-            address: "",
-            gender: "",
-            avatar: "",
+            name, email, password, role, phone
         }
-        const res = await handleAPI(api, data, "post");
+        if (dataSelected) {
+            delete data.password;
+        }
+        const res = await handleAPI(api, data, dataSelected ? "patch" : "post");
         if (res && res.data) {
             onCancel();
             fetchUser();
-            message.success("Tạo mới thành công");
+            message.success(dataSelected ? "Cập nhập thành công" : "Tạo mới thành công");
         } else {
             notification.error({
                 message: "Error Creation",
@@ -61,23 +76,32 @@ const UserModalCreate = (props: IProps) => {
     }
     const onCancel = () => {
         form.resetFields();
-        setIsModalOpenCreate(false);
+        onClose();
     }
     return (
         <Modal
-            title="Tạo mới người dùng"
-            open={isModalOpenCreate}
+            title={dataSelected ? "Cập nhật người dùng" : "Tạo mới người dùng"}
+            open={isVisible}
             onOk={() => form.submit()}
             onCancel={onCancel}
-            okText={"Tạo mới"}
+            okText={dataSelected ? "Cập nhật" : "Tạo mới"}
             cancelText={"Huỷ"}
             maskClosable={false}
             okButtonProps={{
                 loading: isLoading
             }}
+            style={{ top: 50 }}
         >
-            <Divider />
-
+            {
+                dataSelected &&
+                <div className="d-flex justify-content-center">
+                    <Avatar
+                        size={80}
+                        icon={<UserOutlined />}
+                        src={dataSelected.avatar}
+                    />
+                </div>
+            }
             <Form
                 form={form}
                 disabled={isLoading}
@@ -109,13 +133,13 @@ const UserModalCreate = (props: IProps) => {
                     ]}
                 >
 
-                    <Input placeholder="Email" type="email" />
+                    <Input placeholder="Email" type="email" disabled={dataSelected ? true : false} />
                 </Form.Item>
                 <Form.Item
                     name={"password"}
                     label={"Mật khẩu"}
                     rules={[{
-                        required: true,
+                        required: dataSelected ? false : true,
                         message: "Vui lòng không để trống"
                     }]}
                 >
@@ -138,11 +162,11 @@ const UserModalCreate = (props: IProps) => {
                     label={"Số điện thoại"}
                 >
 
-                    <Input placeholder="Số điện thoại" />
+                    <Input placeholder="Số điện thoại" disabled={dataSelected ? true : false} />
                 </Form.Item>
             </Form>
         </Modal>
     )
 }
 
-export default UserModalCreate
+export default ModalUser

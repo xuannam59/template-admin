@@ -1,8 +1,13 @@
-import React from 'react'
+import Access from '@/components/Share/Access'
+import { ALL_PERMISSIONS } from '@/constants/permissions'
 
 const GeneralSettingPage = () => {
     return (
-        <div>GeneralSettingPage</div>
+        <Access
+            permission={ALL_PERMISSIONS.SETTINGS.GET}
+        >
+            <div>GeneralSettingPage</div>
+        </Access>
     )
 }
 

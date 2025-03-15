@@ -1,10 +1,12 @@
 import handleAPI from '@/apis/handleAPI'
 import ProductViewDetail from '@/components/Product/ProductViewDetail'
+import Access from '@/components/Share/Access'
 import TableData from '@/components/Table/TableData'
-import { DeleteTwoTone, EditTwoTone } from '@ant-design/icons'
-import { Image, message, notification, Popconfirm, TableColumnsType, TableProps, Tag, Typography } from 'antd'
+import { ALL_PERMISSIONS } from '@/constants/permissions'
+import { Button, Image, message, Modal, notification, Space, TableColumnsType, Tag, Typography } from 'antd'
 import dayjs from 'dayjs'
 import { useEffect, useState } from 'react'
+import { TbEdit, TbTrash } from 'react-icons/tb'
 import { Link, useNavigate } from 'react-router-dom'
 
 export interface IProducts {
@@ -78,7 +80,7 @@ const ProductPage = () => {
         }
     }
 
-    const handelDelete = async (id: string) => {
+    const handleRemove = async (id: string) => {
         const res = await handleAPI(`/products/${id}`, "", "delete");
         if (res && res.data) {
             fetchProducts();
@@ -263,34 +265,41 @@ const ProductPage = () => {
             title: 'Hàng động',
             minWidth: 120,
             fixed: "right",
-            render: (item: IProducts) => {
+            render: (product: IProducts) => {
                 return (
                     <>
-                        <div className="d-flex gap-4">
-                            <EditTwoTone
-                                style={{ fontSize: '18px', cursor: "pointer" }}
-                                twoToneColor="#f57800"
-                                onClick={() => {
-                                    navigate(`/products/update/${item._id}`);
-                                }}
-                            />
-
-                            <Popconfirm
-                                placement="bottomRight"
-                                title={"Xoá sản phẩm"}
-                                description={"Bạn chắc chắn muốn xoá sản phẩm này"}
-                                okText="Yes"
-                                cancelText="No"
-                                onConfirm={() => {
-                                    handelDelete(item._id);
-                                }}
+                        <Space>
+                            <Access
+                                permission={ALL_PERMISSIONS.PROMOTIONS.UPDATE}
+                                hideChildren
                             >
-                                <DeleteTwoTone
-                                    style={{ fontSize: '18px', cursor: "pointer" }}
-                                    twoToneColor="#ff4d4f"
+                                <Button
+                                    type="text"
+                                    onClick={() => {
+                                        navigate(`/products/update/${product._id}`);
+                                    }}
+                                    icon={<TbEdit color="" size={20}
+                                        className="text-info"
+                                    />}
                                 />
-                            </Popconfirm>
-                        </div>
+                            </Access>
+                            <Access
+                                permission={ALL_PERMISSIONS.PRODUCTS.DELETE}
+                                hideChildren
+                            >
+                                <Button
+                                    type="text"
+                                    onClick={() => Modal.confirm({
+                                        title: "Xác nhận",
+                                        content: "Bạn chắc chắn muốn xoá?",
+                                        onOk: () => handleRemove(product._id)
+                                    })}
+                                    icon={<TbTrash size={20}
+                                        className="text-danger"
+                                    />}
+                                />
+                            </Access>
+                        </Space>
                     </>
                 )
             }
@@ -311,35 +320,41 @@ const ProductPage = () => {
     })
 
     return (
-        <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
-            <div className="row">
-                <div className="col">
-                    <TableData
-                        api='products'
-                        columns={columns}
-                        openAddNew={() => { navigate("/products/create") }}
-                        current={current}
-                        pageSize={pageSize}
-                        total={total}
-                        isLoading={isLoading}
-                        dataSource={listProduct}
-                        setFilterQuery={setFilterQuery}
-                        setSortQuery={setSortQuery}
-                        setCurrent={setCurrent}
-                        setPageSize={setPageSize}
-                        dataExport={dataExport}
-                    />
+        <Access
+            permission={ALL_PERMISSIONS.PRODUCTS.GET}
+        >
+            <div className="container p-2 rounded" style={{ backgroundColor: "white" }}>
+                <div className="row">
+                    <div className="col">
+                        <TableData
+                            api='products'
+                            columns={columns}
+                            openAddNew={() => { navigate("/products/create") }}
+                            current={current}
+                            pageSize={pageSize}
+                            total={total}
+                            isLoading={isLoading}
+                            dataSource={listProduct}
+                            setFilterQuery={setFilterQuery}
+                            setSortQuery={setSortQuery}
+                            setCurrent={setCurrent}
+                            setPageSize={setPageSize}
+                            dataExport={dataExport}
+                            permissionCreate={ALL_PERMISSIONS.PRODUCTS.CREATE}
+                            permissionDelete={ALL_PERMISSIONS.PRODUCTS.DELETE}
+                        />
+                    </div>
                 </div>
+                <ProductViewDetail
+                    isOpenDetail={isOpenDetail}
+                    onClose={() => {
+                        setDataViewDetail(undefined);
+                        setIsOpenDetail(false)
+                    }}
+                    dataViewDetail={dataViewDetail}
+                />
             </div>
-            <ProductViewDetail
-                isOpenDetail={isOpenDetail}
-                onClose={() => {
-                    setDataViewDetail(undefined);
-                    setIsOpenDetail(false)
-                }}
-                dataViewDetail={dataViewDetail}
-            />
-        </div>
+        </Access>
     )
 }
 
