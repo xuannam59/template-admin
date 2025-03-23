@@ -23,7 +23,7 @@ export interface IOrder {
         thumbnail: string
         price: number
     }>
-    status: string
+    status: number
     paymentStatus: number
     paymentMethod: string
     createdAt: string
@@ -189,19 +189,20 @@ const OrderPage = () => {
             align: "center",
             minWidth: 150,
             fixed: "right",
-            render: (status: string, record) => {
+            sorter: true,
+            render: (status: number, record) => {
                 return <>
                     <Select
                         value={status}
                         style={{ width: 180 }}
                         onChange={(val) => handleChangeSelect(record._id, val)}
-                        // disabled={!(status === "pending" || status === "shipping")}
+                        disabled={!(status === 0 || status === 1)}
                         options={[
-                            { value: "pending", label: <Text>Đang đóng hàng</Text> },
-                            { value: "shipping", label: <Text type="warning">Đang giao hàng</Text> },
-                            { value: "success", label: <Text type="success">Giao hàng thành công</Text> },
-                            { value: "cancel", label: <Text type="danger">Huỷ đơn hàng</Text> },
-                            { value: "return", label: 'Trả lại hàng' },
+                            { value: 0, label: <Text>Chờ xác nhận</Text> },
+                            { value: 1, label: <Text type="warning">Chờ giao hàng</Text> },
+                            { value: 2, label: <Text type="success">Đã giao</Text> },
+                            { value: 3, label: 'Trả hàng', disabled: true },
+                            { value: 4, label: <Text type="danger">Đã huỷ</Text>, disabled: true },
                         ]}
                     />
                 </>
@@ -227,7 +228,7 @@ const OrderPage = () => {
         },
     ];
 
-    const handleChangeSelect = async (id: string, status: string) => {
+    const handleChangeSelect = async (id: string, status: number) => {
         setIsLoading(true);
         const api = `orders/update/${id}`;
         const data = {
@@ -239,7 +240,7 @@ const OrderPage = () => {
                 setOrders(prev => {
                     prev.forEach(item => {
                         if (item._id === id) {
-                            if (status === "success") {
+                            if (status === 2) {
                                 item.paymentStatus = 1;
                             }
                             item.status = status;
@@ -311,9 +312,9 @@ const OrderPage = () => {
                         />
                         <OrderStatistic
                             title="Tổng số nhận được "
-                            value={orders.filter(item => item.status === "success").length}
+                            value={orders.filter(item => item.status === 2).length}
                             total={orders.reduce((a, b) => {
-                                if (b.status === "success") {
+                                if (b.status === 2) {
                                     return a + b.totalAmount
                                 }
                                 return a;
@@ -324,13 +325,13 @@ const OrderPage = () => {
                         />
                         <OrderStatistic
                             title="Tổng số trả hàng"
-                            value={orders.filter(item => item.status === "return").length}
+                            value={orders.filter(item => item.status === 3).length}
                             label={`Trong ${daysDifference} ngày`}
                             color="#845EBC"
                         />
                         <OrderStatistic
                             title="Trên đường giao"
-                            value={orders.filter(item => item.status === "shipping").length}
+                            value={orders.filter(item => item.status === 1).length}
                             label="Đã đặt"
                             color="#F36960"
                         />

@@ -5,7 +5,6 @@ import TableData from "@/components/Table/TableData";
 import { ALL_PERMISSIONS } from "@/constants/permissions";
 import { VND } from "@/helpers/handleCurrency";
 import { Avatar, Button, message, Modal, notification, Space, Tag, Typography } from "antd";
-import { icons } from "antd/es/image/PreviewGroup";
 import { ColumnProps } from "antd/es/table";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";

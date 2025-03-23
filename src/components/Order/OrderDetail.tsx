@@ -12,17 +12,17 @@ const { Text } = Typography;
 const OrderDetail = (props: IProps) => {
     const { isOpenDetail, onClose, dataDetail } = props;
 
-    const renderStatus = (status: string | undefined) => {
+    const renderStatus = (status: number | undefined) => {
         switch (status) {
-            case "pending":
-                return <Tag>Đang đóng hàng</Tag>;
-            case "shipping":
-                return <Tag color="processing">Đang giao hàng</Tag>;
-            case "success":
-                return <Tag color="success">Giao hàng thành công</Tag>;
-            case "cancel":
+            case 0:
+                return <Tag>Chờ xác nhận</Tag>;
+            case 1:
+                return <Tag color="processing">Chờ giao hàng</Tag>;
+            case 2:
+                return <Tag color="success">Đã giao</Tag>;
+            case 3:
                 return <Tag color="error">Huỷ đơn hàng</Tag>;
-            case "return":
+            case 4:
                 return <Tag color="purple">Trả hàng</Tag>;
             default:
                 return <Tag color="warning">Không xác định</Tag>;

@@ -16,7 +16,7 @@ interface IStatistic {
         price: number
         cost: number
     }>;
-    status: string;
+    status: number;
 }
 
 const AdminPage = () => {
@@ -31,9 +31,9 @@ const AdminPage = () => {
     const revenue = statistic.reduce((a, b) => a + b.totalAmount, 0);
     const profit = statistic.reduce((a, b) => a + b.products.reduce((x, y) => x + y.price - y.cost, 0), 0);
     const cost = statistic.reduce((a, b) => a + b.products.reduce((x, y) => x + y.cost, 0), 0);
-    const productsDelivered = statistic.filter(item => item.status === "shipping")
+    const productsDelivered = statistic.filter(item => item.status === 1)
         .reduce((a, b) => a + b.products.length, 0)
-    const productsComplete = statistic.filter(item => item.status === "success")
+    const productsComplete = statistic.filter(item => item.status === 2)
         .reduce((a, b) => a + b.products.length, 0)
 
     const getStatistic = async () => {

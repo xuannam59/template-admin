@@ -88,10 +88,6 @@ const RolePage = () => {
             dataIndex: "isActive",
             minWidth: 100,
             render: (isActive: boolean) => {
-                const display = {
-                    color: "",
-
-                }
                 return <Tag color={isActive ? "#87d068" : "#f50"}>{isActive ? "Hoạt động" : "Không Hoạt động"}</Tag>
             }
         },
