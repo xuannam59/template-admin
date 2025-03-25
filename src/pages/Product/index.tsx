@@ -270,7 +270,7 @@ const ProductPage = () => {
                     <>
                         <Space>
                             <Access
-                                permission={ALL_PERMISSIONS.PROMOTIONS.UPDATE}
+                                permission={ALL_PERMISSIONS.PRODUCTS.UPDATE}
                                 hideChildren
                             >
                                 <Button
